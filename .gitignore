@@ -1,0 +1,10 @@
+# Project exclude paths
+/DatabaseLayer/target/
+/ReSTLayer/target/
+/SoapLayer/target/
+/Utilities/target/
+/.idea
+/UserInterfaceFX/target
+/UserInterfaceFX/.mvn
+/UserInterfaceFX/mvnw*
+/VaadinUI/target
