@@ -1,4 +1,4 @@
-package nl.bos;
+package nl.bos.models;
 
 public record OTDS (
         String token,

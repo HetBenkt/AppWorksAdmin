@@ -1,8 +1,7 @@
 package nl.bos;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.bos.models.OTDS;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
@@ -23,6 +22,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.url = url;
     }
 
+    @Override
     public String getToken() {
         return callSoapWebService(url);
     }
@@ -32,6 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return callRestWebServices(url);
     }
 
+    @Override
     public String callRestWebServices(String url) {
         String ticket = "";
         HttpClient httpClient = HttpClient.newBuilder()
