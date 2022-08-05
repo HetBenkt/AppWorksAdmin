@@ -5,7 +5,7 @@ import nl.bos.AuthenticationImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class AuthenticationTests {
+class AuthenticationIntegrationTest {
 
     @Test
     void getSAMLtoken() {
