@@ -1,4 +1,4 @@
-package nl.bos;
+package nl.bos.awp;
 
 public enum AppWorksPlatformImpl implements AppWorksPlatform {
     INSTANCE;

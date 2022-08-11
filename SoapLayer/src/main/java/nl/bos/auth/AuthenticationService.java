@@ -1,4 +1,4 @@
-package nl.bos;
+package nl.bos.auth;
 
 public interface AuthenticationService {
     String getToken();

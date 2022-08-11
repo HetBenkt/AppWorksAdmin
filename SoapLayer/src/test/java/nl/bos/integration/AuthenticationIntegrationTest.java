@@ -1,9 +1,9 @@
 package nl.bos.integration;
 
-import nl.bos.Authentication;
-import nl.bos.AuthenticationImpl;
-import nl.bos.AppWorksPlatform;
-import nl.bos.AppWorksPlatformImpl;
+import nl.bos.auth.Authentication;
+import nl.bos.auth.AuthenticationImpl;
+import nl.bos.awp.AppWorksPlatform;
+import nl.bos.awp.AppWorksPlatformImpl;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;

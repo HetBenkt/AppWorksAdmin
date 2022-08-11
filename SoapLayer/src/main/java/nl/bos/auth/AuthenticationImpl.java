@@ -1,4 +1,4 @@
-package nl.bos;
+package nl.bos.auth;
 
 public enum AuthenticationImpl implements Authentication {
     INSTANCE;

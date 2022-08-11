@@ -1,4 +1,4 @@
-package nl.bos;
+package nl.bos.awp;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

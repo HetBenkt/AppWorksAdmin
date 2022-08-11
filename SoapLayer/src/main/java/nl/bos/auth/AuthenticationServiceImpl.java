@@ -1,4 +1,9 @@
-package nl.bos;
+package nl.bos.auth;
+
+import nl.bos.ws.strategy.RestWebServiceOtdsTicket;
+import nl.bos.ws.strategy.SoapWebServiceAuthenticationToken;
+import nl.bos.ws.strategy.SoapWebServiceContext;
+import nl.bos.ws.strategy.SoapWebServiceUsernameToken;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final String url;

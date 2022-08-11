@@ -1,4 +1,4 @@
-package nl.bos;
+package nl.bos.awp;
 
 public interface AppWorksPlatformService {
     boolean ping();

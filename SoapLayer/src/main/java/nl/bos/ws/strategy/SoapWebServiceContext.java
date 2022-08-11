@@ -1,4 +1,4 @@
-package nl.bos;
+package nl.bos.ws.strategy;
 
 public class SoapWebServiceContext {
     private SoapWebServiceStrategy soapWebServiceStrategy;

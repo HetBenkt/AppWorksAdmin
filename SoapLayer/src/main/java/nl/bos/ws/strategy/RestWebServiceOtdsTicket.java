@@ -1,4 +1,4 @@
-package nl.bos;
+package nl.bos.ws.strategy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.bos.models.OTDS;

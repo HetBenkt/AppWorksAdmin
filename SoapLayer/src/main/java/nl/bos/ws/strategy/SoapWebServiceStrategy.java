@@ -1,4 +1,4 @@
-package nl.bos;
+package nl.bos.ws.strategy;
 
 public interface SoapWebServiceStrategy {
     String run();
