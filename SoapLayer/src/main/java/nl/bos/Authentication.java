@@ -1,7 +1,9 @@
 package nl.bos;
 
 public interface Authentication {
-    public String getToken();
+    String getToken();
 
-    String getOTDSToken();
+    String getOTDSTicket();
+
+    String getToken(String otdsTicket);
 }

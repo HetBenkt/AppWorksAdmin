@@ -3,7 +3,7 @@ package nl.bos;
 public interface AuthenticationService {
     String getToken();
 
-    String getOTDSToken();
+    String getOTDSTicket();
 
-    String callRestWebServices(String url);
+    String getToken(String otdsTicket);
 }

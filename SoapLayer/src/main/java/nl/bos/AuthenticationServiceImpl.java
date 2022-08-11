@@ -28,12 +28,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public String getOTDSToken() {
+    public String getOTDSTicket() {
         return callRestWebServices(url);
     }
 
     @Override
-    public String callRestWebServices(String url) {
+    public String getToken(String otdsTicket) {
+        //TODO return callSoapWebService(url, otdsTicket);
+        return null;
+    }
+
+    private String callRestWebServices(String url) {
         String ticket = "";
         HttpClient httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2)
@@ -142,6 +147,37 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         soapUsernameElem.addTextNode("sysadmin");
         SOAPElement soapPasswordElem = soapUsernameTokenElem.addChildElement("Password", namespaceWsse);
         soapPasswordElem.addTextNode("admin");
+
+        // SOAP Body
+        SOAPBody soapBody = envelope.getBody();
+        SOAPElement soapRequestElem = soapBody.addChildElement("Request", namespaceSamlp);
+        soapRequestElem.addAttribute(new QName("MajorVersion"), "1");
+        soapRequestElem.addAttribute(new QName("MinorVersion"), "1");
+        SOAPElement soapAuthenticationQueryElem = soapRequestElem.addChildElement("AuthenticationQuery", namespaceSamlp);
+        SOAPElement soapSubjectElem = soapAuthenticationQueryElem.addChildElement("Subject", namespaceSaml);
+        SOAPElement soapNameIdentifierElem = soapSubjectElem.addChildElement("NameIdentifier", namespaceSaml);
+        soapNameIdentifierElem.addAttribute(new QName("Format"), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
+        soapNameIdentifierElem.addTextNode("sysadmin");
+    }
+
+    private void createSoapEnvelope(SOAPMessage soapMessage, String otdsTicket) throws SOAPException {
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+
+        String namespaceSamlp = "samlp";
+        String namespaceSamlpURI = "urn:oasis:names:tc:SAML:1.0:protocol";
+        String namespaceSaml = "saml";
+        String namespaceSamlURI = "urn:oasis:names:tc:SAML:1.0:assertion";
+
+        // SOAP Envelope
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration(namespaceSamlp, namespaceSamlpURI);
+        envelope.addNamespaceDeclaration(namespaceSaml, namespaceSamlURI);
+
+        // SOAP Header
+        SOAPHeader soapHeader = soapMessage.getSOAPHeader();
+        SOAPElement soapOTAuthenticationElem = soapHeader.addChildElement("OTAuthentication");
+        SOAPElement soapAuthenticationTokenElem = soapOTAuthenticationElem.addChildElement("AuthenticationToken");
+        soapAuthenticationTokenElem.addTextNode(otdsTicket);
 
         // SOAP Body
         SOAPBody soapBody = envelope.getBody();
