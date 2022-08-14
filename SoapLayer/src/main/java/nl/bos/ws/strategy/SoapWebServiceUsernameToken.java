@@ -10,9 +10,9 @@ import javax.xml.soap.*;
 public class SoapWebServiceUsernameToken implements SoapWebServiceStrategy {
     private final String url;
 
-    private Configuration config = ConfigurationImpl.INSTANCE;
+    private final Configuration config = ConfigurationImpl.INSTANCE;
 
-    public SoapWebServiceUsernameToken(String url) {
+    public SoapWebServiceUsernameToken(final String url) {
         this.url = url;
     }
 

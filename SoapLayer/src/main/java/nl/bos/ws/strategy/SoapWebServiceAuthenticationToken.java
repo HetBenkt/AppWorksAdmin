@@ -9,7 +9,7 @@ public class SoapWebServiceAuthenticationToken implements SoapWebServiceStrategy
     private final String url;
     private final String otdsTicket;
 
-    public SoapWebServiceAuthenticationToken(String url, String otdsTicket) {
+    public SoapWebServiceAuthenticationToken(final String url, final String otdsTicket) {
         this.url = url;
         this.otdsTicket = otdsTicket;
     }

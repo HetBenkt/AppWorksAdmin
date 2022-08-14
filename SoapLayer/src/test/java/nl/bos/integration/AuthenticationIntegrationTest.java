@@ -18,19 +18,19 @@ class AuthenticationIntegrationTest {
     }
 
     @Test
-    void getSAMLtoken() {
+    void getSamlToken() {
         Authentication authentication = AuthenticationImpl.INSTANCE;
         Assertions.assertThat(authentication.getToken()).isNotEmpty();
     }
 
     @Test
-    void getOTDStoken() {
+    void getOtdsToken() {
         Authentication authentication = AuthenticationImpl.INSTANCE;
         Assertions.assertThat(authentication.getOTDSTicket()).isNotEmpty();
     }
 
     @Test
-    void getSAMLtokenFromOTDStoken() {
+    void getSamlTokenFromOtdsToken() {
         Authentication authentication = AuthenticationImpl.INSTANCE;
         String otdsTicket = authentication.getOTDSTicket();
         Assertions.assertThat(otdsTicket).isNotEmpty();

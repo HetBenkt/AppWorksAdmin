@@ -17,15 +17,15 @@ import java.util.Map;
 public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
     private final String url;
 
-    private Configuration config = ConfigurationImpl.INSTANCE;
+    private final Configuration config = ConfigurationImpl.INSTANCE;
 
-    public RestWebServiceOtdsTicket(String url) {
+    public RestWebServiceOtdsTicket(final String url) {
         this.url = url;
     }
 
     @Override
     public String run() {
-        String ticket = "";
+        String ticket;
         HttpClient httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2)
                 .connectTimeout(Duration.ofSeconds(10))

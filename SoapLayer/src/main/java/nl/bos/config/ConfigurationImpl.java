@@ -9,7 +9,7 @@ import java.util.Properties;
 public enum ConfigurationImpl implements Configuration {
     INSTANCE;
 
-    private Properties properties = new Properties();
+    private final Properties properties = new Properties();
 
     ConfigurationImpl() {
         try (InputStream inStream = AppWorksPlatformImpl.class.getClassLoader().getResourceAsStream("config.properties")) {

@@ -8,12 +8,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class AuthenticationMockTest {
 
     @Test
-    void getSAMLtoken() {
+    void getSamlToken() {
         //TODO
     }
 
     @Test
-    void getOTDStoken() {
+    void getOtdsToken() {
         //TODO
     }
 }
