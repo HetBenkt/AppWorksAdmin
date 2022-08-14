@@ -16,7 +16,7 @@ public class SoapWebServiceAuthenticationToken implements SoapWebServiceStrategy
 
     @Override
     public String run() {
-        String SAMLArtifactID = "";
+        String SamlArtifactId = "";
         try {
             // Create SOAP Connection
             SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
@@ -33,8 +33,8 @@ public class SoapWebServiceAuthenticationToken implements SoapWebServiceStrategy
 
             SOAPBody soapBody = soapResponse.getSOAPBody();
             Node assertionArtifact = soapBody.getElementsByTagName("samlp:AssertionArtifact").item(0);
-            SAMLArtifactID = assertionArtifact.getTextContent();
-            System.out.println("SAMLArtifactID: " + SAMLArtifactID);
+            SamlArtifactId = assertionArtifact.getTextContent();
+            System.out.println("SamlArtifactId: " + SamlArtifactId);
 
             soapConnection.close();
 
@@ -43,7 +43,7 @@ public class SoapWebServiceAuthenticationToken implements SoapWebServiceStrategy
             System.err.println("\nError occurred while sending SOAP Request to Server!\nMake sure you have the correct endpoint URL and SOAPAction!\n");
             e.printStackTrace();
         }
-        return SAMLArtifactID;
+        return SamlArtifactId;
     }
 
     private SOAPMessage createSOAPRequest() throws Exception {
