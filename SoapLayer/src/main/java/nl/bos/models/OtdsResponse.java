@@ -1,6 +1,6 @@
 package nl.bos.models;
 
-public record OTDS (
+public record OtdsResponse(
         String token,
         String userId,
         String ticket,
@@ -10,6 +10,6 @@ public record OTDS (
         boolean continuation,
         String continuationContext,
         String continuationData
-    ) {
+) {
 }
 

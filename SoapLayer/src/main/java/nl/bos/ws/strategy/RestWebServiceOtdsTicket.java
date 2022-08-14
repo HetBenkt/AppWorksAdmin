@@ -1,7 +1,9 @@
 package nl.bos.ws.strategy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.bos.models.OTDS;
+import nl.bos.config.Configuration;
+import nl.bos.config.ConfigurationImpl;
+import nl.bos.models.OtdsResponse;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,6 +16,8 @@ import java.util.Map;
 
 public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
     private final String url;
+
+    private Configuration config = ConfigurationImpl.INSTANCE;
 
     public RestWebServiceOtdsTicket(String url) {
         this.url = url;
@@ -28,9 +32,9 @@ public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
                 .build();
 
         Map<Object, Object> data = new HashMap<>();
-        data.put("userName", "awdev");
-        data.put("password", "admin");
-        data.put("targetResourceId", "7a3eb4ce-b1ec-4acb-bb5c-45e79df2830e");
+        data.put("userName", config.getProperties().getProperty("username"));
+        data.put("password", config.getProperties().getProperty("password"));
+        data.put("targetResourceId", config.getProperties().getProperty("targetResourceId"));
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -38,15 +42,14 @@ public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
             HttpRequest request = HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(data)))
                     .uri(URI.create(url))
-                    //.setHeader("User-Agent", "Java 11 HttpClient Bot") // add request header
                     .header("Content-Type", "application/json")
                     .build();
 
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String jsonBody = response.body();
-            OTDS otds = objectMapper.readValue(jsonBody, OTDS.class);
-            ticket = otds.ticket();
+            OtdsResponse otdsResponse = objectMapper.readValue(jsonBody, OtdsResponse.class);
+            ticket = otdsResponse.ticket();
 
             // print status code
             System.out.println(response.statusCode());

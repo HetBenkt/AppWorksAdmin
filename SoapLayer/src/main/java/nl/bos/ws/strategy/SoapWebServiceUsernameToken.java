@@ -1,5 +1,7 @@
 package nl.bos.ws.strategy;
 
+import nl.bos.config.Configuration;
+import nl.bos.config.ConfigurationImpl;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
@@ -7,6 +9,8 @@ import javax.xml.soap.*;
 
 public class SoapWebServiceUsernameToken implements SoapWebServiceStrategy {
     private final String url;
+
+    private Configuration config = ConfigurationImpl.INSTANCE;
 
     public SoapWebServiceUsernameToken(String url) {
         this.url = url;
@@ -79,9 +83,9 @@ public class SoapWebServiceUsernameToken implements SoapWebServiceStrategy {
         SOAPElement soapSecurityElem = soapHeader.addChildElement("Security", namespaceWsse);
         SOAPElement soapUsernameTokenElem = soapSecurityElem.addChildElement("UsernameToken", namespaceWsse);
         SOAPElement soapUsernameElem = soapUsernameTokenElem.addChildElement("Username", namespaceWsse);
-        soapUsernameElem.addTextNode("sysadmin");
+        soapUsernameElem.addTextNode(config.getProperties().getProperty("admin_username"));
         SOAPElement soapPasswordElem = soapUsernameTokenElem.addChildElement("Password", namespaceWsse);
-        soapPasswordElem.addTextNode("admin");
+        soapPasswordElem.addTextNode(config.getProperties().getProperty("admin_password"));
 
         // SOAP Body
         SOAPBody soapBody = envelope.getBody();
@@ -92,6 +96,6 @@ public class SoapWebServiceUsernameToken implements SoapWebServiceStrategy {
         SOAPElement soapSubjectElem = soapAuthenticationQueryElem.addChildElement("Subject", namespaceSaml);
         SOAPElement soapNameIdentifierElem = soapSubjectElem.addChildElement("NameIdentifier", namespaceSaml);
         soapNameIdentifierElem.addAttribute(new QName("Format"), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
-        soapNameIdentifierElem.addTextNode("sysadmin");
+        soapNameIdentifierElem.addTextNode(config.getProperties().getProperty("admin_username"));
     }
 }

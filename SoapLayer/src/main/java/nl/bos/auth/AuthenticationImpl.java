@@ -1,25 +1,27 @@
 package nl.bos.auth;
 
+import nl.bos.config.Configuration;
+import nl.bos.config.ConfigurationImpl;
+
 public enum AuthenticationImpl implements Authentication {
     INSTANCE;
 
+    private Configuration config = ConfigurationImpl.INSTANCE;
+
     public String getToken() {
-        String gatewayURL = "http://192.168.56.110:8080/home/appworks_tips/com.eibus.web.soap.Gateway.wcp";
-        AuthenticationService authenticationService = new AuthenticationServiceImpl(gatewayURL);
+        AuthenticationService authenticationService = new AuthenticationServiceImpl(config.getProperties().getProperty("gateway_url"));
         return authenticationService.getToken();
     }
 
     @Override
     public String getOTDSTicket() {
-        String otdsUrl = "http://192.168.56.110:8181/otdsws/rest/authentication/credentials";
-        AuthenticationService authenticationService = new AuthenticationServiceImpl(otdsUrl);
+        AuthenticationService authenticationService = new AuthenticationServiceImpl(config.getProperties().getProperty("otds_url"));
         return authenticationService.getOTDSTicket();
     }
 
     @Override
     public String getToken(String otdsTicket) {
-        String gatewayURL = "http://192.168.56.110:8080/home/appworks_tips/com.eibus.web.soap.Gateway.wcp";
-        AuthenticationService authenticationService = new AuthenticationServiceImpl(gatewayURL);
+        AuthenticationService authenticationService = new AuthenticationServiceImpl(config.getProperties().getProperty("gateway_url"));
         return authenticationService.getToken(otdsTicket);
     }
 }

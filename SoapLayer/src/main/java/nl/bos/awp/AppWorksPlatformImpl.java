@@ -1,23 +1,15 @@
 package nl.bos.awp;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import nl.bos.config.Configuration;
+import nl.bos.config.ConfigurationImpl;
 
 public enum AppWorksPlatformImpl implements AppWorksPlatform {
     INSTANCE;
-    private static final Properties properties = new Properties();
 
-    static {
-        try (InputStream inStream = AppWorksPlatformImpl.class.getClassLoader().getResourceAsStream("config.properties")) {
-            properties.load(inStream);
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading config.properties");
-        }
-    }
+    private Configuration config = ConfigurationImpl.INSTANCE;
 
     public boolean ping() {
-        AppWorksPlatformService awpService = new AppWorksPlatformServiceImpl(properties.getProperty("health_url"));
+        AppWorksPlatformService awpService = new AppWorksPlatformServiceImpl(config.getProperties().getProperty("health_url"));
         return awpService.ping();
     }
 }
