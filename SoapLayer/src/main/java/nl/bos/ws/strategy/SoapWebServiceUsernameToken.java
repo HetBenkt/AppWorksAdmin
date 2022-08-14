@@ -6,11 +6,18 @@ import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SoapWebServiceUsernameToken implements SoapWebServiceStrategy {
     private final String url;
 
-    private final Configuration config = ConfigurationImpl.INSTANCE;
+    private static final Configuration config = ConfigurationImpl.INSTANCE;
+
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public SoapWebServiceUsernameToken(final String url) {
         this.url = url;
@@ -18,7 +25,7 @@ public class SoapWebServiceUsernameToken implements SoapWebServiceStrategy {
 
     @Override
     public String run() {
-        String SAMLArtifactID = "";
+        String samlArtifactId = "";
         try {
             // Create SOAP Connection
             SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
@@ -29,35 +36,41 @@ public class SoapWebServiceUsernameToken implements SoapWebServiceStrategy {
             SOAPMessage soapResponse = soapConnection.call(soapRequest, url);
 
             // Print the SOAP Response
-            System.out.println("Response SOAP Message:");
-            soapResponse.writeTo(System.out);
-            System.out.println();
+            logger.info("Response SOAP Message:");
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            soapResponse.writeTo(bout);
+            String msg = bout.toString(StandardCharsets.UTF_8);
+            logger.info(msg);
 
             SOAPBody soapBody = soapResponse.getSOAPBody();
             Node assertionArtifact = soapBody.getElementsByTagName("samlp:AssertionArtifact").item(0);
-            SAMLArtifactID = assertionArtifact.getTextContent();
-            System.out.println("SAMLArtifactID: " + SAMLArtifactID);
+            samlArtifactId = assertionArtifact.getTextContent();
+            if (logger.getLevel() == Level.INFO) {
+                String msgFormat = String.format("samlArtifactId: %s", samlArtifactId);
+                logger.info(msgFormat);
+            }
 
             soapConnection.close();
 
 
-        } catch (Exception e) {
-            System.err.println("\nError occurred while sending SOAP Request to Server!\nMake sure you have the correct endpoint URL and SOAPAction!\n");
-            e.printStackTrace();
+        } catch (SOAPException | IOException e) {
+            logger.log(Level.SEVERE, "Error occurred while sending SOAP Request to Server!", e);
         }
-        return SAMLArtifactID;
+        return samlArtifactId;
     }
 
-    private SOAPMessage createSOAPRequest() throws Exception {
+    private SOAPMessage createSOAPRequest() throws SOAPException, IOException {
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage soapMessage = messageFactory.createMessage();
         createSoapEnvelope(soapMessage);
         soapMessage.saveChanges();
 
         /* Print the request message, just for debugging purposes */
-        System.out.println("Request SOAP Message:");
-        soapMessage.writeTo(System.out);
-        System.out.println("\n");
+        logger.info("Request SOAP Message:");
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        soapMessage.writeTo(bout);
+        String msg = bout.toString(StandardCharsets.UTF_8);
+        logger.info(msg);
 
         return soapMessage;
     }

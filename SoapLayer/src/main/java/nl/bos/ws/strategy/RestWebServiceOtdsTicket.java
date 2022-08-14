@@ -3,6 +3,7 @@ package nl.bos.ws.strategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.bos.config.Configuration;
 import nl.bos.config.ConfigurationImpl;
+import nl.bos.exception.GeneralAppException;
 import nl.bos.models.OtdsResponse;
 
 import java.io.IOException;
@@ -10,14 +11,19 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
     private final String url;
 
-    private final Configuration config = ConfigurationImpl.INSTANCE;
+    private static final Configuration config = ConfigurationImpl.INSTANCE;
+
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public RestWebServiceOtdsTicket(final String url) {
         this.url = url;
@@ -51,14 +57,12 @@ public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
             OtdsResponse otdsResponse = objectMapper.readValue(jsonBody, OtdsResponse.class);
             ticket = otdsResponse.ticket();
 
-            // print status code
-            System.out.println(response.statusCode());
-
-            // print response body
-            System.out.println(response.body());
-            System.out.println(ticket);
+            if (logger.getLevel() == Level.INFO) {
+                String msg = MessageFormat.format("Status: {0}; Body: {1}; Ticket: {2}", response.statusCode(), response.body(), ticket);
+                logger.info(msg);
+            }
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new GeneralAppException(e);
         }
         return ticket;
     }
