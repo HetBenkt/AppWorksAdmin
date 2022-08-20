@@ -5,16 +5,15 @@ import nl.bos.config.Configuration;
 import nl.bos.config.ConfigurationImpl;
 import nl.bos.exception.GeneralAppException;
 import nl.bos.models.OtdsResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.text.MessageFormat;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,38 +31,32 @@ public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
     @Override
     public String run() {
         String ticket;
-        HttpClient httpClient = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_2)
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
 
-        Map<Object, Object> data = new HashMap<>();
-        data.put("userName", config.getProperties().getProperty("username"));
-        data.put("password", config.getProperties().getProperty("password"));
-        data.put("targetResourceId", config.getProperties().getProperty("targetResourceId"));
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(url);
 
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(data)))
-                    .uri(URI.create(url))
-                    .header("Content-Type", "application/json")
-                    .build();
+            String json = "{\"userName\":\"" + config.getProperties().getProperty("username") + "\",\"password\":\"" + config.getProperties().getProperty("password") + "\",\"targetResourceId\":\"" + config.getProperties().getProperty("targetResourceId") + "\"}";
+            StringEntity entity = new StringEntity(json);
+            httpPost.setEntity(entity);
 
+            httpPost.setHeader("Content-type", "application/json");
+            CloseableHttpResponse response = client.execute(httpPost);
+            String responseJsonBody = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String jsonBody = response.body();
-            OtdsResponse otdsResponse = objectMapper.readValue(jsonBody, OtdsResponse.class);
+            OtdsResponse otdsResponse = new ObjectMapper().readValue(responseJsonBody, OtdsResponse.class);
             ticket = otdsResponse.ticket();
 
             if (logger.getLevel() == Level.INFO) {
-                String msg = MessageFormat.format("Status: {0}; Body: {1}; Ticket: {2}", response.statusCode(), response.body(), ticket);
+                String msg = MessageFormat.format("Status: {0}; Body: {1}; Ticket: {2}", response.getStatusLine().getStatusCode(), responseJsonBody, ticket);
                 logger.info(msg);
             }
-        } catch (IOException | InterruptedException e) {
+
+            client.close();
+        } catch (IOException e) {
             throw new GeneralAppException(e);
         }
+
         return ticket;
     }
 }
