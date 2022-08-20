@@ -7,13 +7,17 @@ import nl.bos.exception.GeneralAppException;
 import nl.bos.models.OtdsResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,16 +39,22 @@ public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
         CloseableHttpClient client = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
 
+        Map<Object, Object> data = new HashMap<>();
+        data.put("userName", config.getProperties().getProperty("username"));
+        data.put("password", config.getProperties().getProperty("password"));
+        data.put("targetResourceId", config.getProperties().getProperty("targetResourceId"));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
         try {
-            String json = "{\"userName\":\"" + config.getProperties().getProperty("username") + "\",\"password\":\"" + config.getProperties().getProperty("password") + "\",\"targetResourceId\":\"" + config.getProperties().getProperty("targetResourceId") + "\"}";
-            StringEntity entity = new StringEntity(json);
+            StringEntity entity = new StringEntity(objectMapper.writeValueAsString(data));
             httpPost.setEntity(entity);
 
-            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Content-type", ContentType.APPLICATION_JSON.getMimeType());
             CloseableHttpResponse response = client.execute(httpPost);
-            String responseJsonBody = EntityUtils.toString(response.getEntity(), "UTF-8");
+            String responseJsonBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
-            OtdsResponse otdsResponse = new ObjectMapper().readValue(responseJsonBody, OtdsResponse.class);
+            OtdsResponse otdsResponse = objectMapper.readValue(responseJsonBody, OtdsResponse.class);
             ticket = otdsResponse.ticket();
 
             if (logger.getLevel() == Level.INFO) {
