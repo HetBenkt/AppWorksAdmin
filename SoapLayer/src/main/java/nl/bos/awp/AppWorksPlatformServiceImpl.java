@@ -14,14 +14,19 @@ public class AppWorksPlatformServiceImpl implements AppWorksPlatformService {
     @Override
     public boolean ping() {
         boolean result;
+        HttpURLConnection httpURLConnection = null;
+
         try {
             URL url = new URL(healthUrl);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setConnectTimeout(1_000);
             result = httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK;
-            httpURLConnection.disconnect();
         } catch (IOException e) {
             result = false;
+        } finally {
+            if (httpURLConnection != null) {
+                httpURLConnection.disconnect();
+            }
         }
         return result;
     }

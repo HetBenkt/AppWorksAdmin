@@ -4,6 +4,7 @@ import nl.bos.auth.Authentication;
 import nl.bos.auth.AuthenticationImpl;
 import nl.bos.awp.AppWorksPlatform;
 import nl.bos.awp.AppWorksPlatformImpl;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -29,6 +30,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationMockTest {
+    private MockedStatic<SOAPConnectionFactory> soapConnectionFactoryMock;
+    private MockedStatic<HttpClients> httpClientsMock;
 
     private final TestData testData = TestData.INSTANCE;
     @Mock
@@ -39,6 +42,8 @@ class AuthenticationMockTest {
     private SOAPConnection soapConnectionMock;
     @Mock
     private CloseableHttpResponse closeableHttpResponseMock;
+    @Mock
+    private StatusLine statusLineMock;
 
     @BeforeAll
     static void isSystemUp() {
@@ -46,9 +51,8 @@ class AuthenticationMockTest {
         Assumptions.assumeThat(awp.ping()).isFalse();
     }
 
-    @Test
-    void getSamlToken() throws SOAPException, IOException {
-        MockedStatic<SOAPConnectionFactory> soapConnectionFactoryMock = mockStatic(SOAPConnectionFactory.class);
+    private void initSoap() throws SOAPException, IOException {
+        soapConnectionFactoryMock = mockStatic(SOAPConnectionFactory.class);
 
         soapConnectionFactoryMock.when(SOAPConnectionFactory::newInstance).
                 thenReturn(soapConnectionFactoryInstanceMock);
@@ -56,16 +60,10 @@ class AuthenticationMockTest {
                 thenReturn(soapConnectionMock);
         when(soapConnectionMock.call(any(), any())).
                 thenReturn(MessageFactory.newInstance().createMessage(null, new ByteArrayInputStream(testData.soapMessage.getBytes())));
-
-        Authentication authentication = AuthenticationImpl.INSTANCE;
-        Assertions.assertThat(authentication.getToken()).isNotEmpty();
-
-        verify(soapConnectionMock).call(any(), any());
     }
 
-    @Test
-    void getOtdsToken() throws IOException {
-        MockedStatic<HttpClients> httpClientsMock = mockStatic(HttpClients.class);
+    private void initRest() throws IOException {
+        httpClientsMock = mockStatic(HttpClients.class);
 
         httpClientsMock.when(HttpClients::createDefault).
                 thenReturn(closeableHttpClientMock);
@@ -73,17 +71,50 @@ class AuthenticationMockTest {
                 thenReturn(closeableHttpResponseMock);
         when(closeableHttpResponseMock.getEntity()).
                 thenReturn(new StringEntity(testData.jsonMessage, StandardCharsets.UTF_8));
+        when(closeableHttpResponseMock.getStatusLine()).
+                thenReturn(statusLineMock);
+        when(statusLineMock.getStatusCode()).
+                thenReturn(200);
+    }
+
+    @Test
+    void getSamlToken() throws SOAPException, IOException {
+        initSoap();
+
+        Authentication authentication = AuthenticationImpl.INSTANCE;
+        Assertions.assertThat(authentication.getToken()).isNotEmpty();
+
+        verify(soapConnectionMock).call(any(), any());
+
+        soapConnectionFactoryMock.close();
+    }
+
+    @Test
+    void getOtdsToken() throws IOException {
+        initRest();
 
         Authentication authentication = AuthenticationImpl.INSTANCE;
         Assertions.assertThat(authentication.getOTDSTicket()).isNotEmpty();
 
         verify(closeableHttpClientMock).execute(any());
+
+        httpClientsMock.close();
     }
 
     @Test
-    void getSamlTokenFromOtdsToken() {
-        //TODO implementation
-        boolean actual = true;
-        Assertions.assertThat(actual).isTrue();
+    void getSamlTokenFromOtdsToken() throws SOAPException, IOException {
+        initRest();
+        initSoap();
+
+        Authentication authentication = AuthenticationImpl.INSTANCE;
+        String otdsTicket = authentication.getOTDSTicket();
+        Assertions.assertThat(otdsTicket).isNotEmpty();
+        Assertions.assertThat(authentication.getToken(otdsTicket)).isNotEmpty();
+
+        verify(closeableHttpClientMock).execute(any());
+        verify(soapConnectionMock).call(any(), any());
+
+        httpClientsMock.close();
+        soapConnectionFactoryMock.close();
     }
 }

@@ -40,14 +40,10 @@ public class SoapWebServiceToken implements SoapWebServiceStrategy {
             SOAPBody soapBody = soapResponse.getSOAPBody();
             Node assertionArtifact = soapBody.getElementsByTagName("samlp:AssertionArtifact").item(0);
             samlArtifactId = assertionArtifact.getTextContent();
-            if (logger.getLevel() == Level.INFO) {
-                String msgFormat = String.format("samlArtifactId: %s", samlArtifactId);
-                logger.info(msgFormat);
-            }
+            String msgFormat = String.format("samlArtifactId: %s", samlArtifactId);
+            logger.info(msgFormat);
 
             soapConnection.close();
-
-
         } catch (SOAPException | IOException e) {
             logger.log(Level.SEVERE, "Error occurred while sending SOAP Request to Server!", e);
         }

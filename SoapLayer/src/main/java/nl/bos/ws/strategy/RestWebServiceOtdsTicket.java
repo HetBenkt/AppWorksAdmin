@@ -18,14 +18,11 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
-    private final String url;
-
     private static final Configuration config = ConfigurationImpl.INSTANCE;
-
+    private final String url;
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public RestWebServiceOtdsTicket(final String url) {
@@ -57,10 +54,8 @@ public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
             OtdsResponse otdsResponse = objectMapper.readValue(responseJsonBody, OtdsResponse.class);
             ticket = otdsResponse.ticket();
 
-            if (logger.getLevel() == Level.INFO) {
-                String msg = MessageFormat.format("Status: {0}; Body: {1}; Ticket: {2}", response.getStatusLine().getStatusCode(), responseJsonBody, ticket);
-                logger.info(msg);
-            }
+            String msg = MessageFormat.format("Status: {0}; Body: {1}; Ticket: {2}", response.getStatusLine().getStatusCode(), responseJsonBody, ticket);
+            logger.info(msg);
 
             client.close();
         } catch (IOException e) {

@@ -8,4 +8,4 @@
 /UserInterfaceFX/.mvn
 /UserInterfaceFX/mvnw*
 /VaadinUI/target
-/SoapLayer/src/test/resources/config.properties
+/SoapLayer/src/test/resources/*.properties
