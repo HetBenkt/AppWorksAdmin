@@ -4,6 +4,7 @@ import nl.bos.auth.Authentication;
 import nl.bos.auth.AuthenticationImpl;
 import nl.bos.awp.AppWorksPlatform;
 import nl.bos.awp.AppWorksPlatformImpl;
+import nl.bos.ws.strategy.SoapWebServiceToken;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.entity.StringEntity;
@@ -26,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -83,7 +85,6 @@ class AuthenticationMockTest {
 
         Authentication authentication = AuthenticationImpl.INSTANCE;
         Assertions.assertThat(authentication.getToken()).isNotEmpty();
-
         verify(soapConnectionMock).call(any(), any());
 
         soapConnectionFactoryMock.close();
@@ -95,7 +96,6 @@ class AuthenticationMockTest {
 
         Authentication authentication = AuthenticationImpl.INSTANCE;
         Assertions.assertThat(authentication.getOTDSTicket()).isNotEmpty();
-
         verify(closeableHttpClientMock).execute(any());
 
         httpClientsMock.close();
@@ -110,11 +110,27 @@ class AuthenticationMockTest {
         String otdsTicket = authentication.getOTDSTicket();
         Assertions.assertThat(otdsTicket).isNotEmpty();
         Assertions.assertThat(authentication.getToken(otdsTicket)).isNotEmpty();
-
         verify(closeableHttpClientMock).execute(any());
         verify(soapConnectionMock).call(any(), any());
 
         httpClientsMock.close();
+        soapConnectionFactoryMock.close();
+    }
+
+    @Test
+    void unsupportedMethodOnParentClass() throws SOAPException, IOException {
+        soapConnectionFactoryMock = mockStatic(SOAPConnectionFactory.class);
+
+        soapConnectionFactoryMock.when(SOAPConnectionFactory::newInstance).
+                thenReturn(soapConnectionFactoryInstanceMock);
+        when(soapConnectionFactoryInstanceMock.createConnection()).
+                thenReturn(soapConnectionMock);
+
+        SoapWebServiceToken soapWebServiceStrategy = new SoapWebServiceToken("");
+        Exception exception = assertThrows(UnsupportedOperationException.class, soapWebServiceStrategy::run);
+        Assertions.assertThat(exception.getClass().getSimpleName()).isEqualTo("UnsupportedOperationException");
+        verify(soapConnectionFactoryInstanceMock).createConnection();
+
         soapConnectionFactoryMock.close();
     }
 }

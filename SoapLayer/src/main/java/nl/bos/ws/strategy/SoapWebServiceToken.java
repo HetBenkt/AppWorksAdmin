@@ -1,12 +1,12 @@
 package nl.bos.ws.strategy;
 
+import nl.bos.exception.GeneralAppException;
 import org.w3c.dom.Node;
 
 import javax.xml.soap.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SoapWebServiceToken implements SoapWebServiceStrategy {
@@ -45,7 +45,7 @@ public class SoapWebServiceToken implements SoapWebServiceStrategy {
 
             soapConnection.close();
         } catch (SOAPException | IOException e) {
-            logger.log(Level.SEVERE, "Error occurred while sending SOAP Request to Server!", e);
+            throw new GeneralAppException(e);
         }
         return samlArtifactId;
     }
