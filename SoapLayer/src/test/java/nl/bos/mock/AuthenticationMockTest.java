@@ -118,19 +118,9 @@ class AuthenticationMockTest {
     }
 
     @Test
-    void unsupportedMethodOnParentClass() throws SOAPException, IOException {
-        soapConnectionFactoryMock = mockStatic(SOAPConnectionFactory.class);
-
-        soapConnectionFactoryMock.when(SOAPConnectionFactory::newInstance).
-                thenReturn(soapConnectionFactoryInstanceMock);
-        when(soapConnectionFactoryInstanceMock.createConnection()).
-                thenReturn(soapConnectionMock);
-
+    void unsupportedMethodOnParentClass() {
         SoapWebServiceToken soapWebServiceStrategy = new SoapWebServiceToken("");
         Exception exception = assertThrows(UnsupportedOperationException.class, soapWebServiceStrategy::run);
         Assertions.assertThat(exception.getClass().getSimpleName()).isEqualTo("UnsupportedOperationException");
-        verify(soapConnectionFactoryInstanceMock).createConnection();
-
-        soapConnectionFactoryMock.close();
     }
 }
