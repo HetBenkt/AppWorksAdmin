@@ -9,7 +9,6 @@ import nl.bos.awp.AppWorksPlatformImpl;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -27,35 +26,49 @@ class AuthenticationWireMockTest {
     }
 
     @Test
-    @Disabled
     void getSamlToken() {
+        WireMockServer wireMockServer = new WireMockServer(); //default is http://localhost:8080
+        wireMockServer.start();
+        wireMockServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(testData.soapMessage)));
+
         Authentication authentication = AuthenticationImpl.INSTANCE;
         Assertions.assertThat(authentication.getToken()).isNotEmpty();
-        //verify(soapConnectionMock).call(any(), any());
-    }
 
-    @Test
-    void getOtdsToken() {
-        WireMockServer wireMockServer = new WireMockServer(options().port(8181));
-        wireMockServer.start();
-        configureFor("localhost", 8181);
-        stubFor(post(urlEqualTo("/otdsws/rest/authentication/credentials")).willReturn(aResponse().withBody(testData.jsonMessage)));
-
-        Authentication authentication = AuthenticationImpl.INSTANCE;
-        Assertions.assertThat(authentication.getOTDSTicket()).isNotEmpty();
-
-        verify(postRequestedFor(urlEqualTo("/otdsws/rest/authentication/credentials")));
+        wireMockServer.verify(postRequestedFor(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")));
         wireMockServer.stop();
     }
 
     @Test
-    @Disabled
+    void getOtdsToken() {
+        WireMockServer wireMockServer = new WireMockServer(options().port(8181)); //Better use dynamicPort(), but we read a props-file!
+        wireMockServer.start();
+        wireMockServer.stubFor(post(urlEqualTo("/otdsws/rest/authentication/credentials")).willReturn(aResponse().withBody(testData.jsonMessage)));
+
+        Authentication authentication = AuthenticationImpl.INSTANCE;
+        Assertions.assertThat(authentication.getOTDSTicket()).isNotEmpty();
+
+        wireMockServer.verify(postRequestedFor(urlEqualTo("/otdsws/rest/authentication/credentials")));
+        wireMockServer.stop();
+    }
+
+    @Test
     void getSamlTokenFromOtdsToken() {
+        //TODO Reduce duplicate code
+        WireMockServer wireMockRestServer = new WireMockServer(options().port(8181)); //Better use dynamicPort(), but we read a props-file!
+        wireMockRestServer.start();
+        wireMockRestServer.stubFor(post(urlEqualTo("/otdsws/rest/authentication/credentials")).willReturn(aResponse().withBody(testData.jsonMessage)));
+        WireMockServer wireMockSoapServer = new WireMockServer(); //default is http://localhost:8080
+        wireMockSoapServer.start();
+        wireMockSoapServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(testData.soapMessage)));
+
         Authentication authentication = AuthenticationImpl.INSTANCE;
         String otdsTicket = authentication.getOTDSTicket();
         Assertions.assertThat(otdsTicket).isNotEmpty();
         Assertions.assertThat(authentication.getToken(otdsTicket)).isNotEmpty();
-//        verify(closeableHttpClientMock).execute(any());
-//        verify(soapConnectionMock).call(any(), any());
+
+        wireMockRestServer.verify(postRequestedFor(urlEqualTo("/otdsws/rest/authentication/credentials")));
+        wireMockSoapServer.verify(postRequestedFor(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")));
+        wireMockRestServer.stop();
+        wireMockSoapServer.stop();
     }
 }
