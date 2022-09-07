@@ -13,7 +13,7 @@ class AuthenticationIntegrationTest {
 
     @BeforeAll
     static void isSystemUp() {
-        AppWorksPlatform awp = AppWorksPlatformImpl.INSTANCE;
+        AppWorksPlatform awp = AppWorksPlatformImpl.getInstance("config_integration.properties");
         Assumptions.assumeThat(awp.ping()).isTrue();
     }
 

@@ -6,7 +6,7 @@ import nl.bos.config.ConfigurationImpl;
 public enum AuthenticationImpl implements Authentication {
     INSTANCE;
 
-    private final Configuration config = ConfigurationImpl.INSTANCE;
+    private final Configuration config = ConfigurationImpl.getInstance();
 
     public String getToken() {
         AuthenticationService authenticationService = new AuthenticationServiceImpl(config.getProperties().getProperty("gateway_url"));

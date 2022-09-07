@@ -49,7 +49,7 @@ class AuthenticationMockTest {
 
     @BeforeAll
     static void isSystemUp() {
-        AppWorksPlatform awp = AppWorksPlatformImpl.INSTANCE;
+        AppWorksPlatform awp = AppWorksPlatformImpl.getInstance("config_mock.properties");
         Assumptions.assumeThat(awp.ping()).isFalse();
     }
 

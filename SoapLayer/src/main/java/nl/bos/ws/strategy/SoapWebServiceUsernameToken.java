@@ -7,7 +7,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.*;
 
 public class SoapWebServiceUsernameToken extends SoapWebServiceToken {
-    private static final Configuration config = ConfigurationImpl.INSTANCE;
+    private static final Configuration config = ConfigurationImpl.getInstance();
 
     public SoapWebServiceUsernameToken(final String url) {
         super(url);

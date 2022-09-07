@@ -5,21 +5,33 @@ import nl.bos.exception.GeneralAppException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-public enum ConfigurationImpl implements Configuration {
-    INSTANCE;
+public class ConfigurationImpl implements Configuration {
+    private static final Properties properties = new Properties();
+    private static Configuration configuration;
 
-    private final Properties properties = new Properties();
-
-    ConfigurationImpl() {
-        try (InputStream inStream = AppWorksPlatformImpl.class.getClassLoader().getResourceAsStream("config.properties")) {
+    private ConfigurationImpl(String fileName) {
+        try (InputStream inStream = AppWorksPlatformImpl.class.getClassLoader().getResourceAsStream(fileName)) {
             properties.load(inStream);
-            Logger.getLogger(this.getClass().getName()).info("Config file loaded...");
+            String message = MessageFormat.format("Config file ''{0}'' loaded...", fileName);
+            Logger.getLogger(Configuration.class.getName()).info(message);
         } catch (IOException e) {
             throw new GeneralAppException(e);
         }
+    }
+
+    public static Configuration getInstance(String fileName) {
+        if (configuration == null) {
+            configuration = new ConfigurationImpl(fileName);
+        }
+        return configuration;
+    }
+
+    public static Configuration getInstance() {
+        return getInstance("config.properties");
     }
 
     @Override

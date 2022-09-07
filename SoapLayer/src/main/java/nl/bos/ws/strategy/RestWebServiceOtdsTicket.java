@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
-    private static final Configuration config = ConfigurationImpl.INSTANCE;
+    private static final Configuration config = ConfigurationImpl.getInstance();
     private final String url;
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
