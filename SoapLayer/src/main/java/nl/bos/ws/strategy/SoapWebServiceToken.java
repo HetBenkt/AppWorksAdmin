@@ -20,7 +20,7 @@ public class SoapWebServiceToken implements SoapWebServiceStrategy {
 
     @Override
     public String run() {
-        String samlArtifactId = "";
+        String samlArtifactId;
         try {
             // Create SOAP Connection
             SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();

@@ -3,7 +3,7 @@ package nl.bos.mock;
 public enum TestData {
     INSTANCE;
 
-    String soapMessage = """
+    final String soapMessage = """
             <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:wsse="urn:api.ecm.opentext.com">
             	<SOAP-ENV:Header xmlns:wsse="urn:api.ecm.opentext.com" xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
             		<header xmlns:wsse="urn:api.ecm.opentext.com" xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns="http://schemas.cordys.com/General/1.0/">
@@ -49,7 +49,7 @@ public enum TestData {
             </SOAP-ENV:Envelope>
             """;
 
-    String jsonMessage = """
+    final String jsonMessage = """
             {
                "token":"6F7464735F73657373696F6E5F6B6579",
                "userId":"awdev@awp",
