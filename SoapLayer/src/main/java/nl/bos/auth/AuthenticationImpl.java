@@ -1,12 +1,12 @@
 package nl.bos.auth;
 
+import nl.bos.awp.AppWorksPlatformImpl;
 import nl.bos.config.Configuration;
-import nl.bos.config.ConfigurationImpl;
 
 public enum AuthenticationImpl implements Authentication {
     INSTANCE;
 
-    private final Configuration config = ConfigurationImpl.getInstance();
+    private final Configuration config = AppWorksPlatformImpl.getInstance().getConfig();
 
     public String getToken() {
         AuthenticationService authenticationService = new AuthenticationServiceImpl(config.getProperties().getProperty("gateway_url"));

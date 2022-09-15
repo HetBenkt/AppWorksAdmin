@@ -6,6 +6,8 @@ import nl.bos.auth.Authentication;
 import nl.bos.auth.AuthenticationImpl;
 import nl.bos.awp.AppWorksPlatform;
 import nl.bos.awp.AppWorksPlatformImpl;
+import nl.bos.config.Configuration;
+import nl.bos.config.ConfigurationImpl;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
 import org.junit.jupiter.api.AfterAll;
@@ -29,7 +31,8 @@ class AuthenticationWireMockTest {
 
         wireMockAppWorksServer.stubFor(get(urlEqualTo("/home/system/app/mp/health/ready")).willReturn(aResponse()));
 
-        AppWorksPlatform awp = AppWorksPlatformImpl.getInstance("config_mock.properties");
+        Configuration config = new ConfigurationImpl("config_mock.properties");
+        AppWorksPlatform awp = AppWorksPlatformImpl.getInstance(config);
         Assumptions.assumeThat(awp.ping()).isTrue();
 
         wireMockAppWorksServer.verify(getRequestedFor(urlEqualTo("/home/system/app/mp/health/ready")));

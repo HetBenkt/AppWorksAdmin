@@ -4,6 +4,8 @@ import nl.bos.auth.Authentication;
 import nl.bos.auth.AuthenticationImpl;
 import nl.bos.awp.AppWorksPlatform;
 import nl.bos.awp.AppWorksPlatformImpl;
+import nl.bos.config.Configuration;
+import nl.bos.config.ConfigurationImpl;
 import nl.bos.ws.strategy.SoapWebServiceToken;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -49,7 +51,8 @@ class AuthenticationMockTest {
 
     @BeforeAll
     static void isSystemUp() {
-        AppWorksPlatform awp = AppWorksPlatformImpl.getInstance("config_mock.properties");
+        Configuration config = new ConfigurationImpl("config_mock.properties");
+        AppWorksPlatform awp = AppWorksPlatformImpl.getInstance(config);
         Assumptions.assumeThat(awp.ping()).isFalse();
     }
 

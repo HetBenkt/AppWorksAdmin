@@ -1,30 +1,42 @@
 package nl.bos.awp;
 
 import nl.bos.config.Configuration;
-import nl.bos.config.ConfigurationImpl;
 
 public class AppWorksPlatformImpl implements AppWorksPlatform {
     private static AppWorksPlatform appWorksPlatform;
-    private final Configuration config;
 
-    private AppWorksPlatformImpl(String fileName) {
-        config = ConfigurationImpl.getInstance(fileName);
+    private Configuration config = null;
+
+    private AppWorksPlatformImpl() {
     }
 
-    public static AppWorksPlatform getInstance(String fileName) {
+    public static AppWorksPlatform getInstance(final Configuration config) {
         if (appWorksPlatform == null) {
-            appWorksPlatform = new AppWorksPlatformImpl(fileName);
+            appWorksPlatform = new AppWorksPlatformImpl();
+        }
+        if (config != null) {
+            appWorksPlatform.setConfig(config);
         }
         return appWorksPlatform;
     }
 
     public static AppWorksPlatform getInstance() {
-        return getInstance("config.properties");
+        return getInstance(null);
     }
 
     @Override
     public boolean ping() {
         AppWorksPlatformService awpService = new AppWorksPlatformServiceImpl(config.getProperties().getProperty("health_url"));
         return awpService.ping();
+    }
+
+    @Override
+    public Configuration getConfig() {
+        return config;
+    }
+
+    @Override
+    public void setConfig(Configuration config) {
+        this.config = config;
     }
 }

@@ -1,8 +1,8 @@
 package nl.bos.ws.strategy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.bos.awp.AppWorksPlatformImpl;
 import nl.bos.config.Configuration;
-import nl.bos.config.ConfigurationImpl;
 import nl.bos.exception.GeneralAppException;
 import nl.bos.models.OtdsResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
-    private static final Configuration config = ConfigurationImpl.getInstance();
+    private static final Configuration config = AppWorksPlatformImpl.getInstance().getConfig();
     private final String url;
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 

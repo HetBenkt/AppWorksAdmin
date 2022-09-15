@@ -1,13 +1,13 @@
 package nl.bos.ws.strategy;
 
+import nl.bos.awp.AppWorksPlatformImpl;
 import nl.bos.config.Configuration;
-import nl.bos.config.ConfigurationImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.*;
 
 public class SoapWebServiceUsernameToken extends SoapWebServiceToken {
-    private static final Configuration config = ConfigurationImpl.getInstance();
+    private static final Configuration config = AppWorksPlatformImpl.getInstance().getConfig();
 
     public SoapWebServiceUsernameToken(final String url) {
         super(url);

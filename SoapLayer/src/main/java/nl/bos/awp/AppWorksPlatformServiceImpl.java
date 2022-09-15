@@ -1,5 +1,6 @@
 package nl.bos.awp;
 
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.ContentType;
@@ -22,9 +23,15 @@ public class AppWorksPlatformServiceImpl implements AppWorksPlatformService {
     @Override
     public boolean ping() {
         boolean result;
+        int timeout = 1_000;
 
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet(healthUrl);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
+                .setConnectTimeout(timeout).build();
+
+        try (CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(requestConfig).build()) {
+            final HttpGet httpGet = new HttpGet(healthUrl);
             httpGet.setHeader("Content-type", ContentType.APPLICATION_JSON.getMimeType());
             CloseableHttpResponse response = client.execute(httpGet);
             String responseJsonBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
