@@ -1,10 +1,10 @@
 package nl.bos.config;
 
 import nl.bos.awp.AppWorksPlatformImpl;
-import nl.bos.exception.GeneralAppException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -18,7 +18,7 @@ public class ConfigurationImpl implements Configuration {
             String message = MessageFormat.format("Config file ''{0}'' loaded...", fileName);
             Logger.getLogger(Configuration.class.getName()).info(message);
         } catch (IOException e) {
-            throw new GeneralAppException(e);
+            throw new UncheckedIOException("Error reading configuration file", e);
         }
     }
 

@@ -10,6 +10,7 @@ import nl.bos.awp.AppWorksPlatform;
 import nl.bos.awp.AppWorksPlatformImpl;
 import nl.bos.config.Configuration;
 import nl.bos.config.ConfigurationImpl;
+import nl.bos.exception.GeneralAppException;
 import nl.bos.ws.strategy.SoapWebServiceToken;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -34,10 +35,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationMockTest {
+    private final TestData testData = TestData.INSTANCE;
     private MockedStatic<SOAPConnectionFactory> soapConnectionFactoryMock;
     private MockedStatic<HttpClients> httpClientsMock;
-
-    private final TestData testData = TestData.INSTANCE;
     @Mock
     private SOAPConnectionFactory soapConnectionFactoryInstanceMock;
     @Mock
@@ -94,6 +94,13 @@ class AuthenticationMockTest {
     }
 
     @Test
+    void getSamlTokenFailure() {
+        Authentication authentication = AuthenticationImpl.INSTANCE;
+        Exception exception = assertThrows(GeneralAppException.class, authentication::getToken);
+        Assertions.assertThat(exception.getClass().getSimpleName()).isEqualTo(GeneralAppException.class.getSimpleName());
+    }
+
+    @Test
     void getOtdsToken() throws IOException {
         initRest();
 
@@ -102,6 +109,13 @@ class AuthenticationMockTest {
         verify(closeableHttpClientMock).execute(any());
 
         httpClientsMock.close();
+    }
+
+    @Test
+    void getOtdsTokenFailure() {
+        Authentication authentication = AuthenticationImpl.INSTANCE;
+        Exception exception = assertThrows(GeneralAppException.class, authentication::getOTDSTicket);
+        Assertions.assertThat(exception.getClass().getSimpleName()).isEqualTo(GeneralAppException.class.getSimpleName());
     }
 
     @Test
@@ -124,6 +138,6 @@ class AuthenticationMockTest {
     void unsupportedMethodOnParentClass() {
         SoapWebServiceToken soapWebServiceStrategy = new SoapWebServiceToken("");
         Exception exception = assertThrows(UnsupportedOperationException.class, soapWebServiceStrategy::run);
-        Assertions.assertThat(exception.getClass().getSimpleName()).isEqualTo("UnsupportedOperationException");
+        Assertions.assertThat(exception.getClass().getSimpleName()).isEqualTo(UnsupportedOperationException.class.getSimpleName());
     }
 }

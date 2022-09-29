@@ -16,4 +16,12 @@ class ConfigurationImplTest {
 
         Assertions.assertThat(properties.getProperty("health_url")).isNotEmpty();
     }
+
+    @Test
+    void getPropertiesFailure() {
+        Configuration config = new ConfigurationImpl("");
+        Properties properties = config.getProperties();
+
+        Assertions.assertThat(properties.getProperty("")).isNull();
+    }
 }
