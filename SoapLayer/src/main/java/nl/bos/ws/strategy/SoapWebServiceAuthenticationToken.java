@@ -1,7 +1,6 @@
 package nl.bos.ws.strategy;
 
-import javax.xml.namespace.QName;
-import javax.xml.soap.*;
+import jakarta.xml.soap.*;
 
 public class SoapWebServiceAuthenticationToken extends SoapWebServiceToken {
     private final String otdsTicket;
@@ -34,14 +33,6 @@ public class SoapWebServiceAuthenticationToken extends SoapWebServiceToken {
         SOAPElement soapAuthenticationTokenElem = soapOTAuthenticationElem.addChildElement("AuthenticationToken", namespaceWsse);
         soapAuthenticationTokenElem.addTextNode(otdsTicket);
 
-        // SOAP Body
-        SOAPBody soapBody = envelope.getBody();
-        SOAPElement soapRequestElem = soapBody.addChildElement("Request", namespaceSamlp);
-        soapRequestElem.addAttribute(new QName("MajorVersion"), "1");
-        soapRequestElem.addAttribute(new QName("MinorVersion"), "1");
-        SOAPElement soapAuthenticationQueryElem = soapRequestElem.addChildElement("AuthenticationQuery", namespaceSamlp);
-        SOAPElement soapSubjectElem = soapAuthenticationQueryElem.addChildElement("Subject", namespaceSaml);
-        SOAPElement soapNameIdentifierElem = soapSubjectElem.addChildElement("NameIdentifier", namespaceSaml);
-        soapNameIdentifierElem.addAttribute(new QName("Format"), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
+        buildSoapBody(namespaceSamlp, namespaceSaml, envelope);
     }
 }

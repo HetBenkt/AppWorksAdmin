@@ -1,9 +1,12 @@
 package nl.bos.ws.strategy;
 
+import jakarta.xml.soap.*;
+import nl.bos.awp.AppWorksPlatformImpl;
+import nl.bos.config.Configuration;
 import nl.bos.exception.GeneralAppException;
 import org.w3c.dom.Node;
 
-import javax.xml.soap.*;
+import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,6 +16,7 @@ public class SoapWebServiceToken implements SoapWebServiceStrategy {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final String url;
+    private static final Configuration config = AppWorksPlatformImpl.getInstance().getConfig();
 
     public SoapWebServiceToken(final String url) {
         this.url = url;
@@ -68,5 +72,26 @@ public class SoapWebServiceToken implements SoapWebServiceStrategy {
 
     void createSoapEnvelope(SOAPMessage soapMessage) throws SOAPException {
         throw new UnsupportedOperationException();
+    }
+
+    void buildSoapBody(String namespaceSamlp, String namespaceSaml, SOAPEnvelope envelope) throws SOAPException {
+        createSoapElement(namespaceSamlp, namespaceSaml, envelope);
+    }
+
+    void buildSoapBodyWithUser(String namespaceSamlp, String namespaceSaml, SOAPEnvelope envelope) throws SOAPException {
+        SOAPElement soapNameIdentifierElem = createSoapElement(namespaceSamlp, namespaceSaml, envelope);
+        soapNameIdentifierElem.addTextNode(config.getProperties().getProperty("admin_username"));
+    }
+
+    private SOAPElement createSoapElement(String namespaceSamlp, String namespaceSaml, SOAPEnvelope envelope) throws SOAPException {
+        SOAPBody soapBody = envelope.getBody();
+        SOAPElement soapRequestElem = soapBody.addChildElement("Request", namespaceSamlp);
+        soapRequestElem.addAttribute(new QName("MajorVersion"), "1");
+        soapRequestElem.addAttribute(new QName("MinorVersion"), "1");
+        SOAPElement soapAuthenticationQueryElem = soapRequestElem.addChildElement("AuthenticationQuery", namespaceSamlp);
+        SOAPElement soapSubjectElem = soapAuthenticationQueryElem.addChildElement("Subject", namespaceSaml);
+        SOAPElement soapNameIdentifierElem = soapSubjectElem.addChildElement("NameIdentifier", namespaceSaml);
+        soapNameIdentifierElem.addAttribute(new QName("Format"), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
+        return soapNameIdentifierElem;
     }
 }

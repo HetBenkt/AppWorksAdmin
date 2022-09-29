@@ -1,10 +1,8 @@
 package nl.bos.ws.strategy;
 
+import jakarta.xml.soap.*;
 import nl.bos.awp.AppWorksPlatformImpl;
 import nl.bos.config.Configuration;
-
-import javax.xml.namespace.QName;
-import javax.xml.soap.*;
 
 public class SoapWebServiceUsernameToken extends SoapWebServiceToken {
     private static final Configuration config = AppWorksPlatformImpl.getInstance().getConfig();
@@ -39,15 +37,6 @@ public class SoapWebServiceUsernameToken extends SoapWebServiceToken {
         SOAPElement soapPasswordElem = soapUsernameTokenElem.addChildElement("Password", namespaceWsse);
         soapPasswordElem.addTextNode(config.getProperties().getProperty("admin_password"));
 
-        // SOAP Body
-        SOAPBody soapBody = envelope.getBody();
-        SOAPElement soapRequestElem = soapBody.addChildElement("Request", namespaceSamlp);
-        soapRequestElem.addAttribute(new QName("MajorVersion"), "1");
-        soapRequestElem.addAttribute(new QName("MinorVersion"), "1");
-        SOAPElement soapAuthenticationQueryElem = soapRequestElem.addChildElement("AuthenticationQuery", namespaceSamlp);
-        SOAPElement soapSubjectElem = soapAuthenticationQueryElem.addChildElement("Subject", namespaceSaml);
-        SOAPElement soapNameIdentifierElem = soapSubjectElem.addChildElement("NameIdentifier", namespaceSaml);
-        soapNameIdentifierElem.addAttribute(new QName("Format"), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
-        soapNameIdentifierElem.addTextNode(config.getProperties().getProperty("admin_username"));
+        buildSoapBodyWithUser(namespaceSamlp, namespaceSaml, envelope);
     }
 }
