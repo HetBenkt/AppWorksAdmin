@@ -30,7 +30,7 @@ public class ServiceImpl implements Service {
 
         CloseableHttpClient client = HttpClients.createDefault();
         String gatewayUrl = config.getProperties().getProperty("gateway_url");
-        String url = String.format("%s?SAMLart=%s", gatewayUrl, authentication.getToken());
+        String url = String.format("%s?SAMLart=%s", gatewayUrl, authentication.getToken()); //TODO getToken() can also be getToken(otdsTicket!!)
         HttpPost httpPost = new HttpPost(url);
 
         try {
@@ -41,6 +41,7 @@ public class ServiceImpl implements Service {
             CloseableHttpResponse response = client.execute(httpPost);
             String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
+            //TODO Format XML in the output
             msg = MessageFormat.format("Status: {0}; Body: {1}", response.getStatusLine().getStatusCode(), responseBody);
             logger.info(msg);
 

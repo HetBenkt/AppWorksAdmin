@@ -21,6 +21,8 @@ class ServiceIntegrationTest {
 
     @Test
     void call() {
+        //TODO move to TestData class!?
+        //TODO think on how to pass parameters
         String body = """
                 <SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
                     <SOAP:Body>

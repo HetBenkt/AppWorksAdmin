@@ -39,11 +39,12 @@ public class SoapWebServiceToken implements SoapWebServiceStrategy {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             soapResponse.writeTo(bout);
             String msg = bout.toString(StandardCharsets.UTF_8);
+            //TODO format the XML output
             logger.info(msg);
 
             SOAPBody soapBody = soapResponse.getSOAPBody();
             Node assertionArtifact = soapBody.getElementsByTagName("samlp:AssertionArtifact").item(0);
-            samlArtifactId = assertionArtifact.getTextContent();
+            samlArtifactId = assertionArtifact.getTextContent(); //TODO Save in in a file (via Configuration class?) and check if available/expired??
             String msgFormat = String.format("samlArtifactId: %s", samlArtifactId);
             logger.info(msgFormat);
 

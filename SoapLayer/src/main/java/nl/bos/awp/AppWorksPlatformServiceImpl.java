@@ -35,6 +35,7 @@ public class AppWorksPlatformServiceImpl implements AppWorksPlatformService {
             httpGet.setHeader("Content-type", ContentType.APPLICATION_JSON.getMimeType());
             CloseableHttpResponse response = client.execute(httpGet);
             String responseJsonBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            //TODO format the JSON output
             logger.info(responseJsonBody);
             result = true;
         } catch (IOException e) {
