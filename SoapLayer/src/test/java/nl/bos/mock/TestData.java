@@ -62,4 +62,7 @@ public enum TestData {
                "continuationData":null
             }
             """;
+
+    //TODO make a valid message from the platform
+    final String jsonHealthMessage = "{\"name\":\"John\", \"age\":30, \"car\":null}";
 }
