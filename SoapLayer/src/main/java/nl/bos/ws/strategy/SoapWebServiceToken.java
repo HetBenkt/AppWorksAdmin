@@ -1,6 +1,7 @@
 package nl.bos.ws.strategy;
 
 import jakarta.xml.soap.*;
+import nl.bos.Utils;
 import nl.bos.awp.AppWorksPlatformImpl;
 import nl.bos.config.Configuration;
 import nl.bos.exception.GeneralAppException;
@@ -38,8 +39,7 @@ public class SoapWebServiceToken implements SoapWebServiceStrategy {
             logger.info("Response SOAP Message:");
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             soapResponse.writeTo(bout);
-            String msg = bout.toString(StandardCharsets.UTF_8);
-            //TODO format the XML output
+            String msg = Utils.formatXml(bout.toString(StandardCharsets.UTF_8));
             logger.info(msg);
 
             SOAPBody soapBody = soapResponse.getSOAPBody();
@@ -65,7 +65,7 @@ public class SoapWebServiceToken implements SoapWebServiceStrategy {
         logger.info("Request SOAP Message:");
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         soapMessage.writeTo(bout);
-        String msg = bout.toString(StandardCharsets.UTF_8);
+        String msg = Utils.formatXml(bout.toString(StandardCharsets.UTF_8));
         logger.info(msg);
 
         return soapMessage;

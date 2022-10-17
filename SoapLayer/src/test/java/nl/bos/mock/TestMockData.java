@@ -1,6 +1,6 @@
 package nl.bos.mock;
 
-public enum TestData {
+public enum TestMockData {
     INSTANCE;
 
     final String soapMessage = """
@@ -63,6 +63,5 @@ public enum TestData {
             }
             """;
 
-    //TODO make a valid message from the platform
-    final String jsonHealthMessage = "{\"name\":\"John\", \"age\":30, \"car\":null}";
+    final String jsonHealthMessage = "{\"checks\":[{\"name\":\"Initialization\",\"state\":\"UP\"},{\"name\":\"service.system.monitor\",\"state\":\"UP\"},{\"name\":\"service.system.LDAP\",\"state\":\"UP\"},{\"name\":\"service.system.Repository\",\"state\":\"UP\"},{\"name\":\"service.system.CAP\",\"state\":\"UP\"},{\"name\":\"service.system.Single Sign-On\",\"state\":\"UP\"},{\"name\":\"service.system.Event Handling\",\"state\":\"UP\"},{\"name\":\"service.system.Platform\",\"state\":\"UP\"},{\"name\":\"service.system.Business Process Management\",\"state\":\"DOWN\"},{\"name\":\"service.system.XForms\",\"state\":\"UP\"},{\"name\":\"service.system.Collaborative Workspace\",\"state\":\"UP\"},{\"name\":\"service.system.Notification\",\"state\":\"UP\"},{\"name\":\"service.system.Security Administration\",\"state\":\"UP\"},{\"name\":\"service.system.Logging\",\"state\":\"UP\"},{\"name\":\"service.system.Data Transformation\",\"state\":\"UP\"}],\"status\":\"DOWN\"}";
 }

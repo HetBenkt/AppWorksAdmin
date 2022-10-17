@@ -1,5 +1,6 @@
 package nl.bos.operation;
 
+import nl.bos.Utils;
 import nl.bos.auth.Authentication;
 import nl.bos.auth.AuthenticationImpl;
 import nl.bos.awp.AppWorksPlatformImpl;
@@ -41,8 +42,7 @@ public class ServiceImpl implements Service {
             CloseableHttpResponse response = client.execute(httpPost);
             String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
-            //TODO Format XML in the output
-            msg = MessageFormat.format("Status: {0}; Body: {1}", response.getStatusLine().getStatusCode(), responseBody);
+            msg = MessageFormat.format("Status: {0}; Body: {1}", response.getStatusLine().getStatusCode(), Utils.formatXml(responseBody));
             logger.info(msg);
 
             client.close();

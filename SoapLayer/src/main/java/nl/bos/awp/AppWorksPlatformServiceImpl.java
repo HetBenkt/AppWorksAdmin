@@ -1,9 +1,6 @@
 package nl.bos.awp;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import nl.bos.Utils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -38,18 +35,12 @@ public class AppWorksPlatformServiceImpl implements AppWorksPlatformService {
             final HttpGet httpGet = new HttpGet(healthUrl);
             httpGet.setHeader("Content-type", ContentType.APPLICATION_JSON.getMimeType());
             CloseableHttpResponse response = client.execute(httpGet);
-            String responseJsonBody = formatJson(EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8));
+            String responseJsonBody = Utils.formatJson(EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8));
             logger.info(responseJsonBody);
             result = true;
         } catch (IOException e) {
             result = false;
         }
         return result;
-    }
-
-    private String formatJson(String uglyJsonString) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonElement je = JsonParser.parseString(uglyJsonString);
-        return gson.toJson(je);
     }
 }

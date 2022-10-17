@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class ServiceIntegrationTest {
+    private final static TestIntegrationData testData = TestIntegrationData.INSTANCE;
 
     @BeforeAll
     static void isSystemUp() {
@@ -21,19 +22,8 @@ class ServiceIntegrationTest {
 
     @Test
     void call() {
-        //TODO move to TestData class!?
-        //TODO think on how to pass parameters
-        String body = """
-                <SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
-                    <SOAP:Body>
-                        <GetUserDetails xmlns="http://schemas.cordys.com/notification/workflow/1.0">
-                        </GetUserDetails>
-                    </SOAP:Body>
-                </SOAP:Envelope>
-                """;
-
         Service service = new ServiceImpl();
-        String serviceResponse = service.call(body);
+        String serviceResponse = service.call(testData.requestGetUserDetails);
         Assumptions.assumeThat(serviceResponse).contains("GetUserDetailsResponse");
     }
 }

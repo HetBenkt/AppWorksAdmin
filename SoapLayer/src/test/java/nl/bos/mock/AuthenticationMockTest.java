@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationMockTest {
-    private final TestData testData = TestData.INSTANCE;
+    private final static TestMockData testData = TestMockData.INSTANCE;
     private MockedStatic<SOAPConnectionFactory> soapConnectionFactoryMock;
     private MockedStatic<HttpClients> httpClientsMock;
     @Mock

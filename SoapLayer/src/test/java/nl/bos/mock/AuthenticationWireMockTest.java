@@ -20,7 +20,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 @WireMockTest
 class AuthenticationWireMockTest {
 
-    private static final TestData testData = TestData.INSTANCE;
+    private static final TestMockData testData = TestMockData.INSTANCE;
     private static final WireMockServer wireMockAppWorksServer = new WireMockServer(); //default is http://localhost:8080
     private static final WireMockServer wireMockOtdsServer = new WireMockServer(options().port(8181)); //Better use dynamicPort(), but we read a props-file!
 
