@@ -13,18 +13,13 @@ public enum TestIntegrationData {
             </SOAP:Envelope>
             """;
 
-    final String requestSearchLdap = """
+    final String requestGetSoapProcessors = """
             <SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
               <SOAP:Body>
-                <SearchLDAP xmlns="http://schemas.cordys.com/1.0/ldap">
-                  <dn>cn=cordys,cn=defaultInst,o=22.3.com</dn>
-                  <scope>2</scope>
-                  <filter>&amp;(objectclass=busmethod)(cn=GetUserDetails*)</filter>
+                <GetSoapProcessors xmlns="http://schemas.cordys.com/1.0/ldap">
+                  <dn>o=system,cn=cordys,cn=defaultInst,o=22.3.com</dn>
                   <sort>ascending</sort>
-                  <sortBy />
-                  <returnValues>false</returnValues>
-                  <return />
-                </SearchLDAP>
+                </GetSoapProcessors>
               </SOAP:Body>
             </SOAP:Envelope>
             """;

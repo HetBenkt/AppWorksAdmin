@@ -21,9 +21,16 @@ class ServiceIntegrationTest {
     }
 
     @Test
-    void call() {
+    void callGetUserDetails() {
         Service service = new ServiceImpl();
         String serviceResponse = service.call(testData.requestGetUserDetails);
         Assumptions.assumeThat(serviceResponse).contains("GetUserDetailsResponse");
+    }
+
+    @Test
+    void callGetSoapProcessors() {
+        Service service = new ServiceImpl();
+        String serviceResponse = service.call(testData.requestGetSoapProcessors);
+        Assumptions.assumeThat(serviceResponse).contains("GetSoapProcessorsResponse");
     }
 }
