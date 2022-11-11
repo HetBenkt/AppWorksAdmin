@@ -4,6 +4,7 @@ import jakarta.xml.soap.MessageFactory;
 import jakarta.xml.soap.SOAPConnection;
 import jakarta.xml.soap.SOAPConnectionFactory;
 import jakarta.xml.soap.SOAPException;
+import nl.bos.Utils;
 import nl.bos.auth.Authentication;
 import nl.bos.auth.AuthenticationImpl;
 import nl.bos.awp.AppWorksPlatform;
@@ -19,6 +20,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,10 +63,12 @@ class AuthenticationMockTest {
 
         soapConnectionFactoryMock.when(SOAPConnectionFactory::newInstance).
                 thenReturn(soapConnectionFactoryInstanceMock);
-        when(soapConnectionFactoryInstanceMock.createConnection()).
-                thenReturn(soapConnectionMock);
-        when(soapConnectionMock.call(any(), any())).
-                thenReturn(MessageFactory.newInstance().createMessage(null, new ByteArrayInputStream(testData.soapMessage.getBytes())));
+        if(!Utils.artifactFileExists()) {
+            when(soapConnectionFactoryInstanceMock.createConnection()).
+                    thenReturn(soapConnectionMock);
+            when(soapConnectionMock.call(any(), any())).
+                    thenReturn(MessageFactory.newInstance().createMessage(null, new ByteArrayInputStream(testData.soapMessage.getBytes())));
+        }
     }
 
     private void initRest() throws IOException {
@@ -82,13 +86,28 @@ class AuthenticationMockTest {
                 thenReturn(200);
     }
 
+    @AfterAll
+    static void cleanData() {
+        if(Utils.artifactFileExists()) {
+            Utils.deleteArtifactFile();
+        }
+    }
+
     @Test
     void getSamlToken() throws SOAPException, IOException {
         initSoap();
 
         Authentication authentication = AuthenticationImpl.INSTANCE;
-        Assertions.assertThat(authentication.getToken()).isNotEmpty();
-        verify(soapConnectionMock).call(any(), any());
+
+        String samlArtifactId = "";
+        if(!Utils.artifactFileExists()) {
+            samlArtifactId = authentication.getToken();
+            verify(soapConnectionMock).call(any(), any());
+            Utils.writeToFile(samlArtifactId);
+        } else {
+            samlArtifactId = Utils.readFromFile();
+        }
+        Assertions.assertThat(samlArtifactId).isNotEmpty();
 
         soapConnectionFactoryMock.close();
     }
@@ -126,9 +145,17 @@ class AuthenticationMockTest {
         Authentication authentication = AuthenticationImpl.INSTANCE;
         String otdsTicket = authentication.getOTDSTicket();
         Assertions.assertThat(otdsTicket).isNotEmpty();
-        Assertions.assertThat(authentication.getToken(otdsTicket)).isNotEmpty();
-        verify(closeableHttpClientMock).execute(any());
-        verify(soapConnectionMock).call(any(), any());
+
+        String samlArtifactId = "";
+        if(!Utils.artifactFileExists()) {
+            samlArtifactId = authentication.getToken(otdsTicket);
+            verify(closeableHttpClientMock).execute(any());
+            verify(soapConnectionMock).call(any(), any());
+            Utils.writeToFile(samlArtifactId);
+        } else {
+            samlArtifactId = Utils.readFromFile();
+        }
+        Assertions.assertThat(samlArtifactId).isNotEmpty();
 
         httpClientsMock.close();
         soapConnectionFactoryMock.close();

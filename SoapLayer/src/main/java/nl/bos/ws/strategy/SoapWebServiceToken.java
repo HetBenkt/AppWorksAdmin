@@ -44,7 +44,7 @@ public class SoapWebServiceToken implements SoapWebServiceStrategy {
 
             SOAPBody soapBody = soapResponse.getSOAPBody();
             Node assertionArtifact = soapBody.getElementsByTagName("samlp:AssertionArtifact").item(0);
-            samlArtifactId = assertionArtifact.getTextContent(); //TODO Save in in a file (via Configuration class?) and check if available/expired??
+            samlArtifactId = assertionArtifact.getTextContent();
             String msgFormat = String.format("samlArtifactId: %s", samlArtifactId);
             logger.info(msgFormat);
 

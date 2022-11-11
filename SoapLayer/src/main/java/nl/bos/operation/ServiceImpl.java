@@ -31,7 +31,15 @@ public class ServiceImpl implements Service {
 
         CloseableHttpClient client = HttpClients.createDefault();
         String gatewayUrl = config.getProperties().getProperty("gateway_url");
-        String url = String.format("%s?SAMLart=%s", gatewayUrl, authentication.getToken()); //TODO getToken() can also be getToken(otdsTicket!!)
+
+        String samlArtifactId = "";
+        if(!Utils.artifactFileExists()) {
+            samlArtifactId = authentication.getToken(); //TODO getToken() can also be getToken(otdsTicket!!)
+            Utils.writeToFile(samlArtifactId);
+        } else {
+            samlArtifactId = Utils.readFromFile();
+        }
+        String url = String.format("%s?SAMLart=%s", gatewayUrl, samlArtifactId);
         HttpPost httpPost = new HttpPost(url);
 
         try {

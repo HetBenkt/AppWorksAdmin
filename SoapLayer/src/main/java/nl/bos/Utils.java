@@ -14,11 +14,17 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Utils {
+
+    private static Path tempFile;
 
     private Utils() {
         //Utility class; Not to be instantiated.
@@ -48,5 +54,39 @@ public class Utils {
         } catch (Exception e) {
             throw new GeneralAppException(e);
         }
+    }
+
+    public static void writeToFile(String samlArtifactId) {
+        try {
+            tempFile = Files.createTempFile("AppWorksAdmin", "samlArtifactId");
+            Files.writeString(tempFile, samlArtifactId, Charset.defaultCharset());
+        } catch (IOException e) {
+            throw new GeneralAppException(e);
+        }
+    }
+
+    public static boolean artifactFileExists() {
+        if(tempFile == null) {
+            return false;
+        }
+        return Files.exists(tempFile);
+    }
+
+    public static void deleteArtifactFile() {
+        try {
+            Files.delete(tempFile);
+        } catch (IOException e) {
+            throw new GeneralAppException(e);
+        }
+    }
+
+    public static String readFromFile() {
+        byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(tempFile);
+        } catch (IOException e) {
+            throw new GeneralAppException(e);
+        }
+        return new String(bytes);
     }
 }
