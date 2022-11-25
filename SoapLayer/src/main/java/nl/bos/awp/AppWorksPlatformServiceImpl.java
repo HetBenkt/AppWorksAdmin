@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 public class AppWorksPlatformServiceImpl implements AppWorksPlatformService {
     private final String healthUrl;
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private static final Logger logger = Logger.getLogger(AppWorksPlatformServiceImpl.class.getName());
 
     public AppWorksPlatformServiceImpl(final String healthUrl) {
         this.healthUrl = healthUrl;

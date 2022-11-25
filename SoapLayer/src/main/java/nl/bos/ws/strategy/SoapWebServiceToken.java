@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 
 public class SoapWebServiceToken implements SoapWebServiceStrategy {
 
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private static final Logger logger = Logger.getLogger(SoapWebServiceToken.class.getName());
     private final String url;
     private static final Configuration config = AppWorksPlatformImpl.getInstance().getConfig();
 

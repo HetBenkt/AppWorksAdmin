@@ -18,7 +18,7 @@ import java.io.IOException;
 class AuthenticationIntegrationTest {
 
     @BeforeAll
-    static void isSystemUp() {
+    static void isSystemUp() throws IOException {
         Configuration config = new ConfigurationImpl("config_integration.properties");
         AppWorksPlatform awp = AppWorksPlatformImpl.getInstance(config);
         Assumptions.assumeThat(awp.ping()).isTrue();

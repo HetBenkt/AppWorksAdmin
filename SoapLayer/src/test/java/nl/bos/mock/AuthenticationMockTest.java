@@ -52,7 +52,7 @@ class AuthenticationMockTest {
     private StatusLine statusLineMock;
 
     @BeforeAll
-    static void isSystemUp() {
+    static void isSystemUp() throws IOException {
         Configuration config = new ConfigurationImpl("config_mock.properties");
         AppWorksPlatform awp = AppWorksPlatformImpl.getInstance(config);
         Assumptions.assumeThat(awp.ping()).isFalse();

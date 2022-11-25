@@ -28,7 +28,7 @@ class AuthenticationWireMockTest {
     private static final WireMockServer wireMockOtdsServer = new WireMockServer(options().port(8181)); //Better use dynamicPort(), but we read a props-file!
 
     @BeforeAll
-    static void isSystemUp() {
+    static void isSystemUp() throws IOException {
         wireMockAppWorksServer.start();
         wireMockOtdsServer.start();
 

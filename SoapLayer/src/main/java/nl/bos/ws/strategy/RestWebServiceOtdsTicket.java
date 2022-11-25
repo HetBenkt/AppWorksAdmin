@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 public class RestWebServiceOtdsTicket implements SoapWebServiceStrategy {
     private static final Configuration config = AppWorksPlatformImpl.getInstance().getConfig();
     private final String url;
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private static final Logger logger = Logger.getLogger(RestWebServiceOtdsTicket.class.getName());
 
     public RestWebServiceOtdsTicket(final String url) {
         this.url = url;

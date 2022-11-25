@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 public class ServiceImpl implements Service {
 
     private static final Authentication authentication = AuthenticationImpl.INSTANCE;
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private static final Logger logger = Logger.getLogger(ServiceImpl.class.getName());
     private final Configuration config = AppWorksPlatformImpl.getInstance().getConfig();
 
     @Override
