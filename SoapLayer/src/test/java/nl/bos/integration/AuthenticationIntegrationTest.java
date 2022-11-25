@@ -13,6 +13,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 class AuthenticationIntegrationTest {
 
     @BeforeAll
@@ -23,23 +25,24 @@ class AuthenticationIntegrationTest {
     }
 
     @AfterAll
-    static void cleanData() {
-        if(Utils.artifactFileExists()) {
+    static void cleanData() throws IOException {
+        if (Utils.artifactFileExists()) {
             Utils.deleteArtifactFile();
         }
     }
 
     @Test
-    void getSamlToken() {
+    void getSamlToken() throws IOException {
         Authentication authentication = AuthenticationImpl.INSTANCE;
+        String samlArtifactId;
 
-        String samlArtifactId = "";
-        if(!Utils.artifactFileExists()) {
+        if (!Utils.artifactFileExists()) {
             samlArtifactId = authentication.getToken();
             Utils.writeToFile(samlArtifactId);
         } else {
             samlArtifactId = Utils.readFromFile();
         }
+
         Assertions.assertThat(samlArtifactId).isNotEmpty();
     }
 
@@ -50,18 +53,19 @@ class AuthenticationIntegrationTest {
     }
 
     @Test
-    void getSamlTokenFromOtdsToken() {
+    void getSamlTokenFromOtdsToken() throws IOException {
         Authentication authentication = AuthenticationImpl.INSTANCE;
         String otdsTicket = authentication.getOTDSTicket();
         Assertions.assertThat(otdsTicket).isNotEmpty();
+        String samlArtifactId;
 
-        String samlArtifactId = "";
-        if(!Utils.artifactFileExists()) {
+        if (!Utils.artifactFileExists()) {
             samlArtifactId = authentication.getToken(otdsTicket);
             Utils.writeToFile(samlArtifactId);
         } else {
             samlArtifactId = Utils.readFromFile();
         }
+
         Assertions.assertThat(samlArtifactId).isNotEmpty();
     }
 }

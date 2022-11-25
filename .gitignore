@@ -9,3 +9,4 @@
 /UserInterfaceFX/mvnw*
 /VaadinUI/target
 /SoapLayer/src/test/resources/*.properties
+*.iml

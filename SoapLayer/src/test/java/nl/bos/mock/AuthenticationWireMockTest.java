@@ -15,6 +15,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
@@ -40,8 +42,8 @@ class AuthenticationWireMockTest {
     }
 
     @AfterAll
-    static void shutdownWireMockAndCleanData() {
-        if(Utils.artifactFileExists()) {
+    static void shutdownWireMockAndCleanData() throws IOException {
+        if (Utils.artifactFileExists()) {
             Utils.deleteArtifactFile();
         }
         wireMockAppWorksServer.stop();
@@ -49,19 +51,20 @@ class AuthenticationWireMockTest {
     }
 
     @Test
-    void getSamlToken() {
+    void getSamlToken() throws IOException {
         wireMockAppWorksServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(testData.soapMessage)));
 
         Authentication authentication = AuthenticationImpl.INSTANCE;
+        String samlArtifactId;
 
-        String samlArtifactId = "";
-        if(!Utils.artifactFileExists()) {
+        if (!Utils.artifactFileExists()) {
             samlArtifactId = authentication.getToken();
             wireMockAppWorksServer.verify(postRequestedFor(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")));
             Utils.writeToFile(samlArtifactId);
         } else {
             samlArtifactId = Utils.readFromFile();
         }
+
         Assertions.assertThat(samlArtifactId).isNotEmpty();
     }
 
@@ -76,16 +79,16 @@ class AuthenticationWireMockTest {
     }
 
     @Test
-    void getSamlTokenFromOtdsToken() {
+    void getSamlTokenFromOtdsToken() throws IOException {
         wireMockOtdsServer.stubFor(post(urlEqualTo("/otdsws/rest/authentication/credentials")).willReturn(aResponse().withBody(testData.jsonMessage)));
         wireMockAppWorksServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(testData.soapMessage)));
 
         Authentication authentication = AuthenticationImpl.INSTANCE;
         String otdsTicket = authentication.getOTDSTicket();
         Assertions.assertThat(otdsTicket).isNotEmpty();
+        String samlArtifactId;
 
-        String samlArtifactId = "";
-        if(!Utils.artifactFileExists()) {
+        if (!Utils.artifactFileExists()) {
             samlArtifactId = authentication.getToken(otdsTicket);
             wireMockOtdsServer.verify(postRequestedFor(urlEqualTo("/otdsws/rest/authentication/credentials")));
             wireMockAppWorksServer.verify(postRequestedFor(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")));
@@ -93,6 +96,7 @@ class AuthenticationWireMockTest {
         } else {
             samlArtifactId = Utils.readFromFile();
         }
+
         Assertions.assertThat(samlArtifactId).isNotEmpty();
     }
 }

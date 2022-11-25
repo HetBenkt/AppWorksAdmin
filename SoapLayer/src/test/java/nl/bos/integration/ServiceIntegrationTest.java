@@ -12,6 +12,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 class ServiceIntegrationTest {
     private final static TestIntegrationData testData = TestIntegrationData.INSTANCE;
 
@@ -23,8 +25,8 @@ class ServiceIntegrationTest {
     }
 
     @AfterAll
-    static void cleanData() {
-        if(Utils.artifactFileExists()) {
+    static void cleanData() throws IOException {
+        if (Utils.artifactFileExists()) {
             Utils.deleteArtifactFile();
         }
     }

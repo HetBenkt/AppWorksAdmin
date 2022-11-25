@@ -6,8 +6,11 @@ import nl.bos.awp.AppWorksPlatformImpl;
 import nl.bos.config.Configuration;
 import nl.bos.exception.GeneralAppException;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -49,13 +52,13 @@ public class SoapWebServiceToken implements SoapWebServiceStrategy {
             logger.info(msgFormat);
 
             soapConnection.close();
-        } catch (SOAPException | IOException e) {
+        } catch (SOAPException | IOException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new GeneralAppException(e);
         }
         return samlArtifactId;
     }
 
-    private SOAPMessage createSOAPRequest() throws SOAPException, IOException {
+    private SOAPMessage createSOAPRequest() throws SOAPException, IOException, ParserConfigurationException, TransformerException, SAXException {
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage soapMessage = messageFactory.createMessage();
         createSoapEnvelope(soapMessage);

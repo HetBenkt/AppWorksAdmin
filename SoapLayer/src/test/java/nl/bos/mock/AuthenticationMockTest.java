@@ -87,8 +87,8 @@ class AuthenticationMockTest {
     }
 
     @AfterAll
-    static void cleanData() {
-        if(Utils.artifactFileExists()) {
+    static void cleanData() throws IOException {
+        if (Utils.artifactFileExists()) {
             Utils.deleteArtifactFile();
         }
     }
@@ -98,8 +98,8 @@ class AuthenticationMockTest {
         initSoap();
 
         Authentication authentication = AuthenticationImpl.INSTANCE;
+        String samlArtifactId;
 
-        String samlArtifactId = "";
         if(!Utils.artifactFileExists()) {
             samlArtifactId = authentication.getToken();
             verify(soapConnectionMock).call(any(), any());
@@ -107,8 +107,8 @@ class AuthenticationMockTest {
         } else {
             samlArtifactId = Utils.readFromFile();
         }
-        Assertions.assertThat(samlArtifactId).isNotEmpty();
 
+        Assertions.assertThat(samlArtifactId).isNotEmpty();
         soapConnectionFactoryMock.close();
     }
 

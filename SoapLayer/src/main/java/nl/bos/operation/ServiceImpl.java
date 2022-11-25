@@ -13,7 +13,10 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -28,21 +31,21 @@ public class ServiceImpl implements Service {
     @Override
     public String call(String body) {
         String msg;
+        String samlArtifactId;
 
         CloseableHttpClient client = HttpClients.createDefault();
         String gatewayUrl = config.getProperties().getProperty("gateway_url");
 
-        String samlArtifactId = "";
-        if(!Utils.artifactFileExists()) {
-            samlArtifactId = authentication.getToken(); //TODO getToken() can also be getToken(otdsTicket!!)
-            Utils.writeToFile(samlArtifactId);
-        } else {
-            samlArtifactId = Utils.readFromFile();
-        }
-        String url = String.format("%s?SAMLart=%s", gatewayUrl, samlArtifactId);
-        HttpPost httpPost = new HttpPost(url);
-
         try {
+            if (!Utils.artifactFileExists()) {
+                samlArtifactId = authentication.getToken(); //TODO getToken() can also be getToken(otdsTicket!!)
+                Utils.writeToFile(samlArtifactId);
+            } else {
+                samlArtifactId = Utils.readFromFile();
+            }
+            String url = String.format("%s?SAMLart=%s", gatewayUrl, samlArtifactId);
+            HttpPost httpPost = new HttpPost(url);
+
             StringEntity entity = new StringEntity(body);
             httpPost.setEntity(entity);
 
@@ -54,7 +57,7 @@ public class ServiceImpl implements Service {
             logger.info(msg);
 
             client.close();
-        } catch (IOException e) {
+        } catch (IOException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new GeneralAppException(e);
         }
 
