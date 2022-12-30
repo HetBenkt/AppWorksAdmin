@@ -1,54 +1,18 @@
 package nl.bos.mock;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import nl.bos.Utils;
 import nl.bos.auth.Authentication;
 import nl.bos.auth.AuthenticationImpl;
-import nl.bos.awp.AppWorksPlatform;
-import nl.bos.awp.AppWorksPlatformImpl;
-import nl.bos.config.Configuration;
-import nl.bos.config.ConfigurationImpl;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Assumptions;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 @WireMockTest
-class AuthenticationWireMockTest {
-
-    private static final TestMockData testData = TestMockData.INSTANCE;
-    private static final WireMockServer wireMockAppWorksServer = new WireMockServer(); //default is http://localhost:8080
-    private static final WireMockServer wireMockOtdsServer = new WireMockServer(options().port(8181)); //Better use dynamicPort(), but we read a props-file!
-
-    @BeforeAll
-    static void isSystemUp() throws IOException {
-        wireMockAppWorksServer.start();
-        wireMockOtdsServer.start();
-
-        wireMockAppWorksServer.stubFor(get(urlEqualTo("/home/system/app/mp/health/ready")).willReturn(aResponse().withBody(testData.jsonHealthMessage)));
-
-        Configuration config = new ConfigurationImpl("config_mock.properties");
-        AppWorksPlatform awp = AppWorksPlatformImpl.getInstance(config);
-        Assumptions.assumeThat(awp.ping()).isTrue();
-
-        wireMockAppWorksServer.verify(getRequestedFor(urlEqualTo("/home/system/app/mp/health/ready")));
-    }
-
-    @AfterAll
-    static void shutdownWireMockAndCleanData() throws IOException {
-        if (Utils.artifactFileExists()) {
-            Utils.deleteArtifactFile();
-        }
-        wireMockAppWorksServer.stop();
-        wireMockOtdsServer.stop();
-    }
+class AuthenticationWireMockTest extends AbstractWireMockTest {
 
     @Test
     void getSamlToken() throws IOException {

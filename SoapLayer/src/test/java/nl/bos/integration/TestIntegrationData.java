@@ -4,7 +4,7 @@ public enum TestIntegrationData {
     INSTANCE;
 
     //TODO think on how to pass parameters
-    final String requestGetUserDetails = """
+    public final String requestGetUserDetails = """
             <SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
                 <SOAP:Body>
                     <GetUserDetails xmlns="http://schemas.cordys.com/notification/workflow/1.0">
@@ -13,7 +13,7 @@ public enum TestIntegrationData {
             </SOAP:Envelope>
             """;
 
-    final String requestGetSoapProcessors = """
+    public final String requestGetSoapProcessors = """
             <SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
               <SOAP:Body>
                 <GetSoapProcessors xmlns="http://schemas.cordys.com/1.0/ldap">
