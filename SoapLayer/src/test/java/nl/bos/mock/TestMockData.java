@@ -338,4 +338,25 @@ public enum TestMockData {
             """;
 
     static final String jsonResponseHealth = "{\"checks\":[{\"name\":\"Initialization\",\"state\":\"UP\"},{\"name\":\"service.system.monitor\",\"state\":\"UP\"},{\"name\":\"service.system.LDAP\",\"state\":\"UP\"},{\"name\":\"service.system.Repository\",\"state\":\"UP\"},{\"name\":\"service.system.CAP\",\"state\":\"UP\"},{\"name\":\"service.system.Single Sign-On\",\"state\":\"UP\"},{\"name\":\"service.system.Event Handling\",\"state\":\"UP\"},{\"name\":\"service.system.Platform\",\"state\":\"UP\"},{\"name\":\"service.system.Business Process Management\",\"state\":\"DOWN\"},{\"name\":\"service.system.XForms\",\"state\":\"UP\"},{\"name\":\"service.system.Collaborative Workspace\",\"state\":\"UP\"},{\"name\":\"service.system.Notification\",\"state\":\"UP\"},{\"name\":\"service.system.Security Administration\",\"state\":\"UP\"},{\"name\":\"service.system.Logging\",\"state\":\"UP\"},{\"name\":\"service.system.Data Transformation\",\"state\":\"UP\"}],\"status\":\"DOWN\"}";
+    static final String soapRequestSamlToken = """
+            <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+                <SOAP-ENV:Header>
+                    <wsse:Security>
+                        <wsse:UsernameToken>
+                            <wsse:Username>sysadmin</wsse:Username>
+                            <wsse:Password>admin</wsse:Password>
+                        </wsse:UsernameToken>
+                    </wsse:Security>
+                </SOAP-ENV:Header>
+                <SOAP-ENV:Body>
+                    <samlp:Request MajorVersion="1" MinorVersion="1">
+                        <samlp:AuthenticationQuery>
+                            <saml:Subject>
+                                <saml:NameIdentifier Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">sysadmin</saml:NameIdentifier>
+                            </saml:Subject>
+                        </samlp:AuthenticationQuery>
+                    </samlp:Request>
+                </SOAP-ENV:Body>
+            </SOAP-ENV:Envelope>
+            """;
 }

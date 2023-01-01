@@ -14,9 +14,9 @@ class ServiceWireMockTest extends AbstractWireMockTest {
     @Test
     @Disabled("To be implemented!")
     void callGetUserDetails() {
-        wireMockAppWorksServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(TestMockData.soapResponseSamlToken)));
-        //TODO stub with request data
-        // wireMockAppWorksServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(TestMockData.soapResponseGetUserDetails)));
+        wireMockAppWorksServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).withRequestBody(equalToXml(TestMockData.soapRequestSamlToken)).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(TestMockData.soapResponseSamlToken)));
+        wireMockAppWorksServer.stubFor(post(urlMatching("(\\/home\\/appworks_tips\\/com\\.eibus\\.web\\.soap\\.Gateway\\.wcp\\?SAMLart=.*)")).withRequestBody(equalToXml(TestIntegrationData.soapRequestGetUserDetails)).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(TestMockData.soapResponseGetUserDetails)));
+        //TODO this should work too: wireMockAppWorksServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).withQueryParam("SAMLart", matching("^(.*)$")).withRequestBody(equalToXml(TestIntegrationData.soapRequestGetUserDetails)).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(TestMockData.soapResponseGetUserDetails)));
 
         Service service = new ServiceImpl();
         String serviceResponse = service.call(TestIntegrationData.soapRequestGetUserDetails);
