@@ -37,7 +37,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationMockTest {
-    private final static TestMockData testData = TestMockData.INSTANCE;
     private MockedStatic<SOAPConnectionFactory> soapConnectionFactoryMock;
     private MockedStatic<HttpClients> httpClientsMock;
     @Mock
@@ -67,7 +66,7 @@ class AuthenticationMockTest {
             when(soapConnectionFactoryInstanceMock.createConnection()).
                     thenReturn(soapConnectionMock);
             when(soapConnectionMock.call(any(), any())).
-                    thenReturn(MessageFactory.newInstance().createMessage(null, new ByteArrayInputStream(testData.soapMessage.getBytes())));
+                    thenReturn(MessageFactory.newInstance().createMessage(null, new ByteArrayInputStream(TestMockData.soapResponseSamlToken.getBytes())));
         }
     }
 
@@ -79,7 +78,7 @@ class AuthenticationMockTest {
         when(closeableHttpClientMock.execute(any())).
                 thenReturn(closeableHttpResponseMock);
         when(closeableHttpResponseMock.getEntity()).
-                thenReturn(new StringEntity(testData.jsonMessage, StandardCharsets.UTF_8));
+                thenReturn(new StringEntity(TestMockData.jsonResponseOtdsAuthentication, StandardCharsets.UTF_8));
         when(closeableHttpResponseMock.getStatusLine()).
                 thenReturn(statusLineMock);
         when(statusLineMock.getStatusCode()).

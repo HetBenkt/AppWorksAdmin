@@ -16,7 +16,7 @@ class AuthenticationWireMockTest extends AbstractWireMockTest {
 
     @Test
     void getSamlToken() throws IOException {
-        wireMockAppWorksServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(testData.soapMessage)));
+        wireMockAppWorksServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(TestMockData.soapResponseSamlToken)));
 
         Authentication authentication = AuthenticationImpl.INSTANCE;
         String samlArtifactId;
@@ -34,7 +34,7 @@ class AuthenticationWireMockTest extends AbstractWireMockTest {
 
     @Test
     void getOtdsToken() {
-        wireMockOtdsServer.stubFor(post(urlEqualTo("/otdsws/rest/authentication/credentials")).willReturn(aResponse().withBody(testData.jsonMessage)));
+        wireMockOtdsServer.stubFor(post(urlEqualTo("/otdsws/rest/authentication/credentials")).willReturn(aResponse().withBody(TestMockData.jsonResponseOtdsAuthentication)));
 
         Authentication authentication = AuthenticationImpl.INSTANCE;
         Assertions.assertThat(authentication.getOTDSTicket()).isNotEmpty();
@@ -44,8 +44,8 @@ class AuthenticationWireMockTest extends AbstractWireMockTest {
 
     @Test
     void getSamlTokenFromOtdsToken() throws IOException {
-        wireMockOtdsServer.stubFor(post(urlEqualTo("/otdsws/rest/authentication/credentials")).willReturn(aResponse().withBody(testData.jsonMessage)));
-        wireMockAppWorksServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(testData.soapMessage)));
+        wireMockOtdsServer.stubFor(post(urlEqualTo("/otdsws/rest/authentication/credentials")).willReturn(aResponse().withBody(TestMockData.jsonResponseOtdsAuthentication)));
+        wireMockAppWorksServer.stubFor(post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp")).willReturn(aResponse().withHeader("Content-Type", "text/xml").withBody(TestMockData.soapResponseSamlToken)));
 
         Authentication authentication = AuthenticationImpl.INSTANCE;
         String otdsTicket = authentication.getOTDSTicket();

@@ -18,7 +18,6 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 
 @WireMockTest
 abstract class AbstractWireMockTest {
-    static final TestMockData testData = TestMockData.INSTANCE;
     static final WireMockServer wireMockAppWorksServer = new WireMockServer(); //default is http://localhost:8080
     static final WireMockServer wireMockOtdsServer = new WireMockServer(options().port(8181)); //Better use dynamicPort(), but we read a props-file!
 
@@ -27,7 +26,7 @@ abstract class AbstractWireMockTest {
         wireMockAppWorksServer.start();
         wireMockOtdsServer.start();
 
-        wireMockAppWorksServer.stubFor(get(urlEqualTo("/home/system/app/mp/health/ready")).willReturn(aResponse().withBody(testData.jsonHealthMessage)));
+        wireMockAppWorksServer.stubFor(get(urlEqualTo("/home/system/app/mp/health/ready")).willReturn(aResponse().withBody(TestMockData.jsonResponseHealth)));
 
         Configuration config = new ConfigurationImpl("config_mock.properties");
         AppWorksPlatform awp = AppWorksPlatformImpl.getInstance(config);

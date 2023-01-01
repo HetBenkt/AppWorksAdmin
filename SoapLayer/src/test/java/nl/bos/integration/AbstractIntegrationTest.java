@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeAll;
 import java.io.IOException;
 
 abstract class AbstractIntegrationTest {
-    final static TestIntegrationData testData = TestIntegrationData.INSTANCE;
 
     @BeforeAll
     static void isSystemUp() throws IOException {
