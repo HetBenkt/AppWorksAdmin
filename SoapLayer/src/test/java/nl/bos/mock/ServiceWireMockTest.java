@@ -1,5 +1,6 @@
 package nl.bos.mock;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.bos.exception.GeneralAppException;
 import nl.bos.integration.TestIntegrationData;
 import nl.bos.operation.Service;
@@ -34,7 +35,7 @@ class ServiceWireMockTest extends AbstractWireMockTest {
     }
 
     @Test
-    void callGetSoapProcessors() {
+    void callGetSoapProcessors() throws JsonProcessingException {
         wireMockAppWorksServer.stubFor(
                 post(urlPathEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp"))
                         .withQueryParam("SAMLart", matching("(.*)"))
@@ -45,6 +46,8 @@ class ServiceWireMockTest extends AbstractWireMockTest {
 
         Service service = new ServiceImpl();
         String serviceResponse = service.call(TestIntegrationData.soapRequestGetSoapProcessors);
+        //TODO (in another test?) see also tryJackson() test:
+        // SoapProcessorsEnvelope soapProcessorsEnvelope = new XmlMapper().readValue(serviceResponse, SoapProcessorsEnvelope.class);
 
         wireMockAppWorksServer.verify(
                 postRequestedFor(urlPathEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp"))
