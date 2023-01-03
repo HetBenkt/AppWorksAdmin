@@ -26,7 +26,16 @@ abstract class AbstractWireMockTest {
         wireMockAppWorksServer.start();
         wireMockOtdsServer.start();
 
-        wireMockAppWorksServer.stubFor(get(urlEqualTo("/home/system/app/mp/health/ready")).willReturn(aResponse().withBody(TestMockData.jsonResponseHealth)));
+        wireMockAppWorksServer.stubFor(
+                get(urlEqualTo("/home/system/app/mp/health/ready"))
+                        .willReturn(aResponse()
+                                .withBody(TestMockData.jsonResponseHealth)));
+        wireMockAppWorksServer.stubFor(
+                post(urlEqualTo("/home/appworks_tips/com.eibus.web.soap.Gateway.wcp"))
+                        .withRequestBody(equalToXml(TestMockData.soapRequestSamlToken))
+                        .willReturn(aResponse()
+                                .withHeader("Content-Type", "text/xml")
+                                .withBody(TestMockData.soapResponseSamlToken)));
 
         Configuration config = new ConfigurationImpl("config_mock.properties");
         AppWorksPlatform awp = AppWorksPlatformImpl.getInstance(config);

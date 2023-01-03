@@ -149,7 +149,6 @@ public enum TestMockData {
             </SOAP:Envelope>
             """;
 
-    //TODO write test for it!!
     static final String soapResponseSearchLDAP = """
             <SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
                 <SOAP:Header>
